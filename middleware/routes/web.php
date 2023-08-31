@@ -33,3 +33,6 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
+Route::any('/lti', [App\Http\Controllers\LtiController::class, 'ltiMessage']);
+Route::get('/lti/jwks', [App\Http\Controllers\LtiController::class, 'getJWKS']);
