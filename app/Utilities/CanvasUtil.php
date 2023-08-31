@@ -81,7 +81,7 @@ class CanvasUtil extends ProviderUtil
             $response = $client->get($baseUrl . 'accounts/' . $accountId . 'users');
 
             if ($response->getStatusCode() == 200) {
-                return json_decod($response->getBody());
+                return json_decode($response->getBody());
             } else {
 
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
