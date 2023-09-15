@@ -2,38 +2,27 @@
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use App\Http\Controllers\LtiController;
+
+declare(strict_types=1);
+
+enum CanvasType
+{
+    case CLOUD;
+    case OSS;
+}
 
 class CanvasUtil extends ProviderUtil
 {
-    /*
-   * From Canvas, we get this information, this will be useful
-   * because even though we are not speaking to canvas via LTI, we
-   * will be modeling our providers after the LTI model.
-   ***********************************************************
-  the ID of the Account object
-  "id": 2,
-   The display name of the account
-  "name": "Canvas Account",
-   The UUID of the account
-  "uuid": "WvAHhY5FINzq5IyRIJybGeiXyFkG3SqHUPb7jZY5",
-   The account's parent ID, or null if this is the root account
-  "parent_account_id": 1,
-   The ID of the root account, or null if this is the root account
-  "root_account_id": 1,
-   The state of the account. Can be 'active' or 'deleted'.
-  "workflow_state": "active"
-}
-*/
-    // This probably will not remain as we will not be speaking LTI
-    // to canvas, but we may want their provider info stored in similar schema
-    public function __construct()
+    const CLOUD = 'cloud';
+    const OSS = 'oss';
+
+
+    public function __construct(int $accountId, string $url, CanvasType $type, string $instanceId)
     {
-        $controller = new LtiController();
-        $info = $controller->getCanvasLtiAccount();
-        $this->ltiAccount = $info['root_account_id'];
-        $this->providerId = $info['id'];
-        $this->providerName = $info['name'];
+        match ($type) {
+            CanvasType::OSS => parent::__construct(CanvasUtil::OSS, $accountId, $instanceId, $url),
+            CanvasType::CLOUD => parent::__construct(CanvasUtil::CLOUD, $accountId, $instanceId, $url),
+        };
     }
 
     /**
@@ -66,7 +55,7 @@ class CanvasUtil extends ProviderUtil
      * AccountId can be accessed via the field in the class,
      * but it seems most of the time it will be self.
      */
-    public static function listUsers(string $accountId = 'self')
+    public static function listUsers(string $accountId = 'self'): mixed
     {
         $baseUrl = env('CANVAS_API');
         $accessToken = env('CANVAS_API_KEY');
@@ -97,7 +86,7 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws \Exception
      */
-    public static function showUserDetails(string $userId = 'self',)
+    public static function showUserDetails(string $userId = 'self'): mixed
     {
         $baseUrl = env('CANVAS_API');
         $accessToken = env('CANVAS_API_KEY');
@@ -132,8 +121,7 @@ class CanvasUtil extends ProviderUtil
      * @return JSON decoded
      * @throws \Exception
      */
-
-    public function createUser(string $name, string $email, bool $terms = true)
+    public function createUser(string $name, string $email, bool $terms = true): mixed
     {
 
         $userData = [
@@ -174,7 +162,7 @@ class CanvasUtil extends ProviderUtil
      * @return JSON decoded
      * @throws \Exception
      */
-    public function listActivityStream(string $account = 'self')
+    public function listActivityStream(string $account = 'self'): mixed
     {
         $baseUrl = env('CANVAS_API');
         $apiKey = env('CANVAS_API_KEY');
@@ -202,7 +190,7 @@ class CanvasUtil extends ProviderUtil
      * @return JSON decoded
      * @throws \Exception
      */
-    public static function getActivityStreamSummary(string $account = 'self')
+    public static function getActivityStreamSummary(string $account = 'self'): mixed
     {
         $baseUrl = env('CANVAS_API');
         $apiKey = env('CANVAS_API_KEY');
@@ -230,7 +218,7 @@ class CanvasUtil extends ProviderUtil
      * @return JSON decoded
      * @throws \Exception
      */
-    public static function listTodoItems(string $account = 'self')
+    public static function listTodoItems(string $account = 'self'): mixed
     {
         $baseUrl = env('CANVAS_API');
         $apiKey = env('CANVAS_API_KEY');
@@ -258,7 +246,7 @@ class CanvasUtil extends ProviderUtil
      * @return JSON decoded
      *
      **/
-    public static function getTodoItemsCount(string $account = 'self')
+    public static function getTodoItemsCount(string $account = 'self'): mixed
     {
         $baseUrl = env('CANVAS_API');
         $apiKey = env('CANVAS_API_KEY');
@@ -287,7 +275,7 @@ class CanvasUtil extends ProviderUtil
      * @throws \Exception
      */
 
-    public static function listUpcomingAssignments(string $userId = 'self')
+    public static function listUpcomingAssignments(string $userId = 'self'): mixed
     {
         $baseUrl = env('CANVAS_API');
         $apiKey = env('CANVAS_API_KEY');
@@ -315,7 +303,7 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws \Exception
      */
-    public static function listMissingSubmissions(string $userId = 'self')
+    public static function listMissingSubmissions(string $userId = 'self'): mixed
     {
         $baseUrl = env('CANVAS_API');
         $apiKey = env('CANVAS_API_KEY');
@@ -341,7 +329,7 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws \Exception
      **/
-    public static function listCourses()
+    public static function listCourses(): mixed
     {
         $baseUrl = env('CANVAS_API');
         $apiKey = env('CANVAS_API_KEY');
@@ -366,7 +354,7 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws \Exception
      **/
-    public static function listCoursesForUser(string $userId = 'self')
+    public static function listCoursesForUser(string $userId = 'self'): mixed
     {
         $baseUrl = env('CANVAS_API');
         $apiKey = env('CANVAS_API_KEY');
@@ -401,7 +389,7 @@ class CanvasUtil extends ProviderUtil
      * in a course. To query another user’s progress, you must be a
      * teacher in the course, an administrator, or a linked observer of the user."
      * */
-    public static function getUserCourseProgress(string $userId = 'self', string $courseId)
+    public static function getUserCourseProgress(string $userId = 'self', string $courseId): mixed
     {
         $baseUrl = env('CANVAS_API');
         $apiKey = env('CANVAS_API_KEY');
@@ -427,7 +415,7 @@ class CanvasUtil extends ProviderUtil
      * @returns JSON decoded
      * @throws \Exception
      * */
-    public static function getEnrollmentsByUser(string $userId)
+    public static function getEnrollmentsByUser(string $userId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -451,7 +439,7 @@ class CanvasUtil extends ProviderUtil
      * @returns JSON decoded
      * @throws \Exception
      **/
-    public static function getEnrollmentsByCourse(string $courseId)
+    public static function getEnrollmentsByCourse(string $courseId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -474,7 +462,7 @@ class CanvasUtil extends ProviderUtil
      * @returns JSON decoded
      * @throws \Exception
      **/
-    public static function getEnrollmentsBySection(string $sectionId)
+    public static function getEnrollmentsBySection(string $sectionId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -498,7 +486,7 @@ class CanvasUtil extends ProviderUtil
      * @param? string $type (default=StudentEnrollment)
      *
      **/
-    public static function enrollUser(string $userId, string $type = "StudentEnrollment", string $courseId)
+    public static function enrollUser(string $userId, string $type = "StudentEnrollment", string $courseId): mixed
     {
         $enrollment = [
             'user_id' => [$userId],
@@ -529,7 +517,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      **/
-    public static function enrollUserInSection(string $sectionId, string $userId, string $type = "StudentEnrollment")
+    public static function enrollUserInSection(string $sectionId, string $userId, string $type = "StudentEnrollment"): mixed
     {
         $enrollment = [
             'user_id' => [$userId],
@@ -556,7 +544,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      */
-    public static function deleteEnrollment(string $enrollmentId, string $courseId)
+    public static function deleteEnrollment(string $enrollmentId, string $courseId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -579,7 +567,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      */
-    public static function acceptCourseInvitation(string $courseId, string $userId = 'self')
+    public static function acceptCourseInvitation(string $courseId, string $userId = 'self'): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -604,7 +592,7 @@ class CanvasUtil extends ProviderUtil
      * @return mixed decoded JSON
      * @throws Exception
      */
-    public static function rejectCourseInvitation(string $courseId, string $userId = 'self')
+    public static function rejectCourseInvitation(string $courseId, string $userId = 'self'): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -629,7 +617,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      **/
-    public static function reactivateCourseEnrollment(string $courseId, string $userId = 'self')
+    public static function reactivateCourseEnrollment(string $courseId, string $userId = 'self'): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -654,7 +642,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      **/
-    public static function addLastAttendedDate(string $courseId, string $userId = 'self')
+    public static function addLastAttendedDate(string $courseId, string $userId = 'self'): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -679,7 +667,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      **/
-    public static function queryUserProgress(string $userId = 'self')
+    public static function queryUserProgress(string $userId = 'self'): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -703,7 +691,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      **/
-    public static function cancelUserProgress(string $userId = 'self')
+    public static function cancelUserProgress(string $userId = 'self'): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -727,7 +715,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      **/
-    public static function listAssignmentsForUser(string $courseId, string $userId = 'self')
+    public static function listAssignmentsForUser(string $courseId, string $userId = 'self'): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -751,7 +739,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      **/
-    public static function listAssignmentsByCourse(string $courseId)
+    public static function listAssignmentsByCourse(string $courseId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -773,7 +761,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      **/
-    public static function listAssignmentGroupsByCourse(string $assignmentGroupId, string $courseId)
+    public static function listAssignmentGroupsByCourse(string $assignmentGroupId, string $courseId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -796,7 +784,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      **/
-    public static function deleteAssignment(string $courseId, string $assignmentId)
+    public static function deleteAssignment(string $courseId, string $assignmentId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -820,7 +808,7 @@ class CanvasUtil extends ProviderUtil
      * @return decoded JSON
      * @throws Exception
      **/
-    public static function getAssignment(string $courseId, string $assignmentId)
+    public static function getAssignment(string $courseId, string $assignmentId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -847,7 +835,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function createAssignmentForCourse(array $assignmentInfo, string $courseId)
+    public static function createAssignmentForCourse(array $assignmentInfo, string $courseId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -876,7 +864,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function editAssignmentForCourse(array $assignmentInfo, string $courseId, string  $assignmentId)
+    public static function editAssignmentForCourse(array $assignmentInfo, string $courseId, string  $assignmentId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -904,7 +892,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function submitAssignment(string $courseId, string $assignmentId, array $assignment)
+    public static function submitAssignment(string $courseId, string $assignmentId, array $assignment): mixed
     {
 
         $baseUrl = env("CANVAS_API");
@@ -929,7 +917,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function getAssignmentSubmissions(string $courseId, string $assignmentId)
+    public static function getAssignmentSubmissions(string $courseId, string $assignmentId): mixed
     {
 
         $baseUrl = env("CANVAS_API");
@@ -954,7 +942,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function getSubmissionsForMultipleAssignments(string $courseId)
+    public static function getSubmissionsForMultipleAssignments(string $courseId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -979,7 +967,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function getSubmissionForUser(string $courseId, string $assignmentId, string $userId)
+    public static function getSubmissionForUser(string $courseId, string $assignmentId, string $userId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1004,7 +992,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function getSubmissionForAnonID(string $courseId, string $assignmentId, string $anonId)
+    public static function getSubmissionForAnonID(string $courseId, string $assignmentId, string $anonId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1029,7 +1017,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function uploadFileForSubmission(string $courseId, string $assignmentId, string $userId)
+    public static function uploadFileForSubmission(string $courseId, string $assignmentId, string $userId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1056,7 +1044,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function gradeOrCommentSubmission(string $courseId, string $assignmentId, string  $userId)
+    public static function gradeOrCommentSubmission(string $courseId, string $assignmentId, string  $userId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1083,7 +1071,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function gradeOrCommentSubmissionAnon(string $courseId, string $assignmentId, string $anonId)
+    public static function gradeOrCommentSubmissionAnon(string $courseId, string $assignmentId, string $anonId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1107,7 +1095,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function listGradeableStudents(string $courseId, string $assignmentId)
+    public static function listGradeableStudents(string $courseId, string $assignmentId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1130,7 +1118,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function listMultipleAssignmentsGradeableStudents(string $courseId)
+    public static function listMultipleAssignmentsGradeableStudents(string $courseId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1155,7 +1143,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function markSubmissionAsRead(string $courseId, string $assignmentId, string $userId = 'self')
+    public static function markSubmissionAsRead(string $courseId, string $assignmentId, string $userId = 'self'): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1184,7 +1172,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function markSubmissionItemAsRead(string $courseId, string $assignmentId, string $userId = 'self', string $item)
+    public static function markSubmissionItemAsRead(string $courseId, string $assignmentId, string $userId = 'self', string $item): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1211,7 +1199,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function markSubmissionAsUnread(string $courseId, string $assignmentId, string $userId = 'self')
+    public static function markSubmissionAsUnread(string $courseId, string $assignmentId, string $userId = 'self'): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1237,7 +1225,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function clearUnreadStatusForAllSubmissions(string $courseId, string $userId = 'self')
+    public static function clearUnreadStatusForAllSubmissions(string $courseId, string $userId = 'self'): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
@@ -1263,7 +1251,7 @@ class CanvasUtil extends ProviderUtil
         * @return decoded JSON
         * @throws Exception
         **/
-    public static function getSubmissionSummary(string $courseId, string $assignmentId)
+    public static function getSubmissionSummary(string $courseId, string $assignmentId): mixed
     {
         $baseUrl = env("CANVAS_API");
         $apiKey = env("CANVAS_API_KEY");
