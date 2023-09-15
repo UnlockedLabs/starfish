@@ -1,13 +1,12 @@
 <?php
-// This is a model for an LTI user account as defined by the Canvas API
+
 namespace App\Models;
 
-use Http\Controllers\LtiController\getLtiAccount;
 use Illuminate\Database\Eloquent\Model;
 
 class LTIUser extends Model
 {
-    // This is an example. I know db table names are probably wrong
+    // This is an example from longhornopen github wiki
 
     protected $table = 'lti_user_accounts';
     protected $fillable = ['id', 'name', 'uuid', "parentAccountId", "rootAccountId", "workflowState"];
