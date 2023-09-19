@@ -32,7 +32,7 @@ class CanvasUtil extends ProviderUtil
      * @return string Formatted account or user ID
      * @throws \InvalidArgumentException If the account ID is invalid
      */
-    public static function fmtAndValidateId(string $id)
+    public static function fmtAndValidateId(string $id): string
     {
         if ($id === 'self' || is_numeric($id)) {
             // Append a trailing slash if needed
@@ -49,7 +49,7 @@ class CanvasUtil extends ProviderUtil
      * Get a list of users from Canvas
      *
      * @param? string
-     * @returns mixed JSON decoded
+     * @return mixed JSON decoded
      * @throws \Exception
      *
      * AccountId can be accessed via the field in the class,
@@ -118,7 +118,7 @@ class CanvasUtil extends ProviderUtil
      * @param string $name
      * @param string $email
      * @param? boolean $terms (defaults true)
-     * @return JSON decoded
+     * @return mixed (decoded json)
      * @throws \Exception
      */
     public function createUser(string $name, string $email, bool $terms = true): mixed
@@ -159,7 +159,7 @@ class CanvasUtil extends ProviderUtil
      * List Activity Stream
      *
      * @param? string $account (default self)
-     * @return JSON decoded
+     * @return mixed (decoded json)
      * @throws \Exception
      */
     public function listActivityStream(string $account = 'self'): mixed
@@ -187,7 +187,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * List Activity Stream Summary from Canvas
      * @param? string $account (default self)
-     * @return JSON decoded
+     * @return mixed (decoded json)
      * @throws \Exception
      */
     public static function getActivityStreamSummary(string $account = 'self'): mixed
@@ -215,7 +215,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * List Todo Items from Canvas
      * @param? string $account (default self)
-     * @return JSON decoded
+     * @return mixed (decoded json)
      * @throws \Exception
      */
     public static function listTodoItems(string $account = 'self'): mixed
@@ -243,7 +243,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * Get Todo Items Count from Canvas
      * @param? string $account (default self)
-     * @return JSON decoded
+     * @return mixed (decoded json)
      *
      **/
     public static function getTodoItemsCount(string $account = 'self'): mixed
@@ -271,7 +271,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * List Upcoming Assignments from Canvas
      * @param? string $account (default self)
-     * @return JSON decoded
+     * @return mixed (decoded json)
      * @throws \Exception
      */
 
@@ -381,7 +381,7 @@ class CanvasUtil extends ProviderUtil
      *
      * @param string $userId (default self)
      * @param string $courseId
-     * @return JSON decoded
+     * @return mixed JSON decoded
      * @throws \Exception
      *
      * Canvas Docs:
@@ -412,7 +412,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * List Course Assignments from Canvas
      * @param string $userId
-     * @returns JSON decoded
+     * @return mixed JSON decoded
      * @throws \Exception
      * */
     public static function getEnrollmentsByUser(string $userId): mixed
@@ -436,7 +436,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * List Enrollments from Canvas by Course ID
      * @param string $
-     * @returns JSON decoded
+     * @return mixed JSON decoded
      * @throws \Exception
      **/
     public static function getEnrollmentsByCourse(string $courseId): mixed
@@ -459,7 +459,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * List Course Enrollments By Section
      * @param string $sectionId
-     * @returns JSON decoded
+     * @return mixed JSON decoded
      * @throws \Exception
      **/
     public static function getEnrollmentsBySection(string $sectionId): mixed
@@ -484,7 +484,8 @@ class CanvasUtil extends ProviderUtil
      * @param string $user_id
      * @param string $course_id
      * @param? string $type (default=StudentEnrollment)
-     *
+     * @throws \Exception
+     * @return mixed JSON decoded
      **/
     public static function enrollUser(string $userId, string $type = "StudentEnrollment", string $courseId): mixed
     {
@@ -505,16 +506,16 @@ class CanvasUtil extends ProviderUtil
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
         } catch (RequestException $error) {
-        } catch (RequestException $error) {
             throw new \Exception('API request failed: ' . $error->getMessage());
         }
     }
+
     /**
      *  Enroll a user in a Section
      * @param string $sectionId
      * @param string $user_id (default=self)
      * @param? string $type (default=StudentEnrollment)
-     * @return decoded JSON
+     * @return mixed decoded JSON
      * @throws Exception
      **/
     public static function enrollUserInSection(string $sectionId, string $userId, string $type = "StudentEnrollment"): mixed
@@ -541,7 +542,7 @@ class CanvasUtil extends ProviderUtil
      *  Delete a course Enrollment
      * @param string $course_id
      * @param string $user_id (default=self)
-     * @return decoded JSON
+     * @return mixed JSON decoded
      * @throws Exception
      */
     public static function deleteEnrollment(string $enrollmentId, string $courseId): mixed
@@ -564,7 +565,7 @@ class CanvasUtil extends ProviderUtil
      * Accept a course invitation
      * @param string $course_id
      * @param string $user_id (default=self)
-     * @return decoded JSON
+     * @return mixed JSON decoded
      * @throws Exception
      */
     public static function acceptCourseInvitation(string $courseId, string $userId = 'self'): mixed
@@ -614,7 +615,7 @@ class CanvasUtil extends ProviderUtil
      * Reactivate a course enrollment
      * @param string $courseId
      * @param string $userId (default=self)
-     * @return decoded JSON
+     * @return mixed decoded JSON
      * @throws Exception
      **/
     public static function reactivateCourseEnrollment(string $courseId, string $userId = 'self'): mixed
@@ -639,7 +640,7 @@ class CanvasUtil extends ProviderUtil
      * Add last attended date of course
      * @param string $courseId
      * @param string $userId (default=self)
-     * @return decoded JSON
+     * @return mixed decoded JSON
      * @throws Exception
      **/
     public static function addLastAttendedDate(string $courseId, string $userId = 'self'): mixed
@@ -664,7 +665,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * Query progress of user
      * @param string $userId (default=self)
-     * @return decoded JSON
+     * @return mixed decoded JSON
      * @throws Exception
      **/
     public static function queryUserProgress(string $userId = 'self'): mixed
@@ -688,7 +689,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * Cancel user progress
      * @param string $userId (default=self)
-     * @return decoded JSON
+     * @return mixed JSON decoded
      * @throws Exception
      **/
     public static function cancelUserProgress(string $userId = 'self'): mixed
@@ -712,7 +713,7 @@ class CanvasUtil extends ProviderUtil
      * List Assignments for User
      * @param string $userId (default=self)
      * @param string $coursrId
-     * @return decoded JSON
+     * @return mixed JSON decoded
      * @throws Exception
      **/
     public static function listAssignmentsForUser(string $courseId, string $userId = 'self'): mixed
@@ -736,7 +737,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * List Assignments for Course
      * @param string $courseId
-     * @return decoded JSON
+     * @return mixed JSON decoded
      * @throws Exception
      **/
     public static function listAssignmentsByCourse(string $courseId): mixed
@@ -758,7 +759,7 @@ class CanvasUtil extends ProviderUtil
     /**
      * List Assignments for Course
      * @param string $courseId
-     * @return decoded JSON
+     * @return mixed JSON decoded
      * @throws Exception
      **/
     public static function listAssignmentGroupsByCourse(string $assignmentGroupId, string $courseId): mixed
@@ -781,7 +782,7 @@ class CanvasUtil extends ProviderUtil
      * Delete Assignment
      * @param string $courseId
      * @param string $assignmentId
-     * @return decoded JSON
+     * @return mixed JSON decoded
      * @throws Exception
      **/
     public static function deleteAssignment(string $courseId, string $assignmentId): mixed
@@ -805,7 +806,7 @@ class CanvasUtil extends ProviderUtil
      * Get a single Assignment
      * @param string $courseId
      * @param string $assignmentId
-     * @return decoded JSON
+     * @return mixed JSON decoded
      * @throws Exception
      **/
     public static function getAssignment(string $courseId, string $assignmentId): mixed
@@ -832,7 +833,7 @@ class CanvasUtil extends ProviderUtil
         * or all of them
         * @param associative array $assignmentInfo
         * @param string $courseId
-        * @return decoded JSON
+        * @return mixed JSON decoded
         * @throws Exception
         **/
     public static function createAssignmentForCourse(array $assignmentInfo, string $courseId): mixed
@@ -861,7 +862,7 @@ class CanvasUtil extends ProviderUtil
         * @param associative array $assignmentInfo
         * @param string $courseId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function editAssignmentForCourse(array $assignmentInfo, string $courseId, string  $assignmentId): mixed
@@ -889,7 +890,7 @@ class CanvasUtil extends ProviderUtil
         * @param associative array $assignment (could also be a file? TODO: look into submissions)
         * @param string $courseId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function submitAssignment(string $courseId, string $assignmentId, array $assignment): mixed
@@ -914,7 +915,7 @@ class CanvasUtil extends ProviderUtil
         *
         * @param string $courseId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function getAssignmentSubmissions(string $courseId, string $assignmentId): mixed
@@ -939,7 +940,7 @@ class CanvasUtil extends ProviderUtil
         *
         * @param string $courseId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function getSubmissionsForMultipleAssignments(string $courseId): mixed
@@ -964,7 +965,7 @@ class CanvasUtil extends ProviderUtil
         * @param string $courseId
         * @param string $userId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function getSubmissionForUser(string $courseId, string $assignmentId, string $userId): mixed
@@ -989,7 +990,7 @@ class CanvasUtil extends ProviderUtil
         * @param string $courseId
         * @param string $anonId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function getSubmissionForAnonID(string $courseId, string $assignmentId, string $anonId): mixed
@@ -1014,7 +1015,7 @@ class CanvasUtil extends ProviderUtil
         * @param string $courseId
         * @param string $userId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function uploadFileForSubmission(string $courseId, string $assignmentId, string $userId): mixed
@@ -1041,7 +1042,7 @@ class CanvasUtil extends ProviderUtil
         * @param string $courseId
         * @param string $userId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function gradeOrCommentSubmission(string $courseId, string $assignmentId, string  $userId): mixed
@@ -1068,7 +1069,7 @@ class CanvasUtil extends ProviderUtil
         * @param string $anonId
         * @param string $assignmentId
         * @param string $courseId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function gradeOrCommentSubmissionAnon(string $courseId, string $assignmentId, string $anonId): mixed
@@ -1092,7 +1093,7 @@ class CanvasUtil extends ProviderUtil
         *
         * @param string $assignmentId
         * @param string $courseId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function listGradeableStudents(string $courseId, string $assignmentId): mixed
@@ -1115,7 +1116,7 @@ class CanvasUtil extends ProviderUtil
         * List Multiple Assignments Gradeable Students
         *
         * @param string $courseId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function listMultipleAssignmentsGradeableStudents(string $courseId): mixed
@@ -1140,7 +1141,7 @@ class CanvasUtil extends ProviderUtil
         * @param string $userId
         * @param string $courseId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function markSubmissionAsRead(string $courseId, string $assignmentId, string $userId = 'self'): mixed
@@ -1169,7 +1170,7 @@ class CanvasUtil extends ProviderUtil
         * @param string $item
         * @param string $courseId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function markSubmissionItemAsRead(string $courseId, string $assignmentId, string $userId = 'self', string $item): mixed
@@ -1196,7 +1197,7 @@ class CanvasUtil extends ProviderUtil
         * @param string $userId
         * @param string $courseId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function markSubmissionAsUnread(string $courseId, string $assignmentId, string $userId = 'self'): mixed
@@ -1222,7 +1223,7 @@ class CanvasUtil extends ProviderUtil
         * Site admin only
         * @param string $userId
         * @param string $courseId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function clearUnreadStatusForAllSubmissions(string $courseId, string $userId = 'self'): mixed
@@ -1248,7 +1249,7 @@ class CanvasUtil extends ProviderUtil
         *
         * @param string $courseId
         * @param string $assignmentId
-        * @return decoded JSON
+        * @return mixed decoded JSON
         * @throws Exception
         **/
     public static function getSubmissionSummary(string $courseId, string $assignmentId): mixed
