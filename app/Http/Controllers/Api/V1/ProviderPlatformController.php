@@ -1,5 +1,6 @@
 <?php
 
+<<<<<<< HEAD:app/Http/Controllers/Api/V1/ProviderPlatformController.php
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\ProviderPlatform;
@@ -88,4 +89,13 @@ class ProviderPlatformController extends Controller
             return response()->json(json_encode($providerPlatform));
         }
     }
+=======
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class ProviderPlatformController extends Controller
+{
+    //
+>>>>>>> 8b2e792 (fix: upgraded to meet schema):middleware/app/Http/Controllers/ProviderPlatformController.php
 }

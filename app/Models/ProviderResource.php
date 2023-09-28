@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProviderResource extends Model
 {
     use HasFactory;
+<<<<<<< HEAD:app/Models/ProviderResource.php
 
     protected $fillable = [
         'resource_id',                   // Course ID
@@ -20,4 +21,6 @@ class ProviderResource extends Model
     {
         parent::__construct($attributes);
     }
+=======
+>>>>>>> 8b2e792 (fix: upgraded to meet schema):middleware/app/Models/ProviderResource.php
 }

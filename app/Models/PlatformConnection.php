@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+<<<<<<< HEAD:app/Models/PlatformConnection.php
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -36,4 +37,10 @@ class PlatformConnection extends Model
     {
         parent::__construct($attributes);
     }
+=======
+
+class PlatformConnection extends Model
+{
+    use HasFactory;
+>>>>>>> 8b2e792 (fix: upgraded to meet schema):middleware/app/Models/PlatformConnection.php
 }
