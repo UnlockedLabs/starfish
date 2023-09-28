@@ -59,17 +59,17 @@ class CanvasUtil extends ProviderUtil
      */
     public function listUsers(string $accountId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $AccessKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $access_key = $this->access_key;
 
         $client = new Client([
             'headers' => [
-                'Authorization' => 'Bearer ' . $AccessKey,
+                'Authorization' => 'Bearer ' . $access_key,
             ],
         ]);
         $accountId = self::fmtAndValidateId($accountId);
         try {
-            $response = $client->get($baseUrl . 'accounts/' . $accountId . 'users');
+            $response = $client->get($base_url . 'accounts/' . $accountId . 'users');
 
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
@@ -90,18 +90,18 @@ class CanvasUtil extends ProviderUtil
      */
     public function showUserDetails(string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $AccessKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $access_key = $this->access_key;
 
         $client = new Client([
-            'base_uri' => $baseUrl,
+            'base_uri' => $base_url,
             'headers' => [
-                'Authorization' => 'Bearer ' . $AccessKey,
+                'Authorization' => 'Bearer ' . $access_key,
             ],
         ]);
         $userId = self::fmtAndValidateId($userId);
         try {
-            $response = $client->get($baseUrl . 'users/' . $userId);
+            $response = $client->get($base_url . 'users/' . $userId);
 
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
@@ -138,14 +138,14 @@ class CanvasUtil extends ProviderUtil
             ],
             'force_validations' => true,
         ];
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
         ]);
         try {
-            $response = $client->post($baseUrl . "accounts/self/users/", $userData);
+            $response = $client->post($base_url . "accounts/self/users/", $userData);
 
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
@@ -166,8 +166,8 @@ class CanvasUtil extends ProviderUtil
      */
     public function listActivityStream(string $account = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -175,7 +175,7 @@ class CanvasUtil extends ProviderUtil
         try {
             $account = self::fmtAndValidateId($account);
 
-            $response = $client->get($baseUrl . 'users/' . $account . 'activity_stream');
+            $response = $client->get($base_url . 'users/' . $account . 'activity_stream');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -194,8 +194,8 @@ class CanvasUtil extends ProviderUtil
      */
     public function getActivityStreamSummary(string $account = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -203,7 +203,7 @@ class CanvasUtil extends ProviderUtil
         $account = self::fmtAndValidateId($account);
 
         try {
-            $response = $client->get($baseUrl . 'users/' .  $account . 'activity_stream/summary');
+            $response = $client->get($base_url . 'users/' .  $account . 'activity_stream/summary');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -222,8 +222,8 @@ class CanvasUtil extends ProviderUtil
      */
     public function listTodoItems(string $account = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -231,7 +231,7 @@ class CanvasUtil extends ProviderUtil
         $account = self::fmtAndValidateId($account);
 
         try {
-            $response = $client->get($baseUrl . 'users/' .  $account . 'todo');
+            $response = $client->get($base_url . 'users/' .  $account . 'todo');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -250,8 +250,8 @@ class CanvasUtil extends ProviderUtil
      **/
     public function getTodoItemsCount(string $account = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -259,7 +259,7 @@ class CanvasUtil extends ProviderUtil
         $account = self::fmtAndValidateId($account);
 
         try {
-            $response = $client->get($baseUrl . 'users/' .  $account . 'todo_item_count');
+            $response = $client->get($base_url . 'users/' .  $account . 'todo_item_count');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -279,8 +279,8 @@ class CanvasUtil extends ProviderUtil
 
     public function listUpcomingAssignments(string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -288,7 +288,7 @@ class CanvasUtil extends ProviderUtil
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->get($baseUrl . 'users/' .  $userId . 'upcoming_events');
+            $response = $client->get($base_url . 'users/' .  $userId . 'upcoming_events');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -307,8 +307,8 @@ class CanvasUtil extends ProviderUtil
      */
     public function listMissingSubmissions(string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -316,7 +316,7 @@ class CanvasUtil extends ProviderUtil
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->get($baseUrl . 'users/' .  $userId . 'missing_submissions');
+            $response = $client->get($base_url . 'users/' .  $userId . 'missing_submissions');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -333,14 +333,14 @@ class CanvasUtil extends ProviderUtil
      **/
     public function listCourses(): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
         ]);
         try {
-            $response = $client->get($baseUrl . 'courses');
+            $response = $client->get($base_url . 'courses');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -360,8 +360,8 @@ class CanvasUtil extends ProviderUtil
      **/
     public function listCoursesForUser(string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -369,7 +369,7 @@ class CanvasUtil extends ProviderUtil
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->get($baseUrl . 'users/' . $userId . 'courses');
+            $response = $client->get($base_url . 'users/' . $userId . 'courses');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -395,15 +395,15 @@ class CanvasUtil extends ProviderUtil
      * */
     public function getUserCourseProgress(string $userId = 'self', string $courseId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
         ]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/users/' . $userId . 'progress');
+            $response = $client->get($base_url . 'courses/' . $courseId . '/users/' . $userId . 'progress');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -421,13 +421,13 @@ class CanvasUtil extends ProviderUtil
      * */
     public function getEnrollmentsByUser(string $userId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->get($baseUrl . 'users/' . $userId . 'enrollments');
+            $response = $client->get($base_url . 'users/' . $userId . 'enrollments');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -445,12 +445,12 @@ class CanvasUtil extends ProviderUtil
      **/
     public function getEnrollmentsByCourse(string $courseId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
 
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/enrollments');
+            $response = $client->get($base_url . 'courses/' . $courseId . '/enrollments');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -468,11 +468,11 @@ class CanvasUtil extends ProviderUtil
      **/
     public function getEnrollmentsBySection(string $sectionId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'sections/' . $sectionId . '/enrollments');
+            $response = $client->get($base_url . 'sections/' . $sectionId . '/enrollments');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -498,12 +498,12 @@ class CanvasUtil extends ProviderUtil
             'type' => [$type],
         ];
 
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
 
         try {
-            $response = $client->post($baseUrl . 'courses/' . $courseId . '/enrollments' . $enrollment);
+            $response = $client->post($base_url . 'courses/' . $courseId . '/enrollments' . $enrollment);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -528,11 +528,11 @@ class CanvasUtil extends ProviderUtil
             'user_id' => [$userId],
             'type' => [$type],
         ];
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->post($baseUrl . 'sections/' . $sectionId . '/enrollments' . $enrollment);
+            $response = $client->post($base_url . 'sections/' . $sectionId . '/enrollments' . $enrollment);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -551,11 +551,11 @@ class CanvasUtil extends ProviderUtil
      */
     public function deleteEnrollment(string $enrollmentId, string $courseId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->delete($baseUrl . 'courses/' . $courseId . '/enrollments/' . $enrollmentId);
+            $response = $client->delete($base_url . 'courses/' . $courseId . '/enrollments/' . $enrollmentId);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -574,13 +574,13 @@ class CanvasUtil extends ProviderUtil
      */
     public function acceptCourseInvitation(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->post($baseUrl . 'courses/' . $courseId . '/enrollments/' . $userId . 'accept');
+            $response = $client->post($base_url . 'courses/' . $courseId . '/enrollments/' . $userId . 'accept');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -599,13 +599,13 @@ class CanvasUtil extends ProviderUtil
      */
     public function rejectCourseInvitation(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->post($baseUrl . 'courses/' . $courseId . '/enrollments/' . $userId . 'reject');
+            $response = $client->post($base_url . 'courses/' . $courseId . '/enrollments/' . $userId . 'reject');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -624,13 +624,13 @@ class CanvasUtil extends ProviderUtil
      **/
     public function reactivateCourseEnrollment(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->put($baseUrl . 'courses/' . $courseId . '/enrollments/' . $userId . 'reactivate');
+            $response = $client->put($base_url . 'courses/' . $courseId . '/enrollments/' . $userId . 'reactivate');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -649,13 +649,13 @@ class CanvasUtil extends ProviderUtil
      **/
     public function addLastAttendedDate(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->put($baseUrl . 'courses/' . $courseId . '/enrollments/' . $userId . 'last_attended');
+            $response = $client->put($base_url . 'courses/' . $courseId . '/enrollments/' . $userId . 'last_attended');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -674,13 +674,13 @@ class CanvasUtil extends ProviderUtil
      **/
     public function queryUserProgress(string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->get($baseUrl . 'progress/' . $userId);
+            $response = $client->get($base_url . 'progress/' . $userId);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -698,12 +698,12 @@ class CanvasUtil extends ProviderUtil
      **/
     public function cancelUserProgress(string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
         try {
-            $response = $client->post($baseUrl . 'progress/' . $userId);
+            $response = $client->post($base_url . 'progress/' . $userId);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -722,13 +722,13 @@ class CanvasUtil extends ProviderUtil
      **/
     public function listAssignmentsForUser(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->get($baseUrl . 'users/' . $userId . 'courses' . $courseId . '/assignments');
+            $response = $client->get($base_url . 'users/' . $userId . 'courses' . $courseId . '/assignments');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -746,11 +746,11 @@ class CanvasUtil extends ProviderUtil
      **/
     public function listAssignmentsByCourse(string $courseId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments');
+            $response = $client->get($base_url . 'courses/' . $courseId . '/assignments');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -768,11 +768,11 @@ class CanvasUtil extends ProviderUtil
      **/
     public function listAssignmentGroupsByCourse(string $assignmentGroupId, string $courseId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignment_groups/' . $assignmentGroupId . '/assignments');
+            $response = $client->get($base_url . 'courses/' . $courseId . '/assignment_groups/' . $assignmentGroupId . '/assignments');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -791,11 +791,11 @@ class CanvasUtil extends ProviderUtil
      **/
     public function deleteAssignment(string $courseId, string $assignmentId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->delete($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId);
+            $response = $client->delete($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -815,11 +815,11 @@ class CanvasUtil extends ProviderUtil
      **/
     public function getAssignment(string $courseId, string $assignmentId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId);
+            $response = $client->get($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -842,11 +842,11 @@ class CanvasUtil extends ProviderUtil
         **/
     public function createAssignmentForCourse(array $assignmentInfo, string $courseId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->post($baseUrl . 'courses/' . $courseId . '/assignments' . $assignmentInfo);
+            $response = $client->post($base_url . 'courses/' . $courseId . '/assignments' . $assignmentInfo);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -871,11 +871,11 @@ class CanvasUtil extends ProviderUtil
         **/
     public function editAssignmentForCourse(array $assignmentInfo, string $courseId, string  $assignmentId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->put($baseUrl . 'courses/' . $courseId . '/assignments' . $assignmentId . '/' . $assignmentInfo);
+            $response = $client->put($base_url . 'courses/' . $courseId . '/assignments' . $assignmentId . '/' . $assignmentInfo);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -900,11 +900,11 @@ class CanvasUtil extends ProviderUtil
     public function submitAssignment(string $courseId, string $assignmentId, array $assignment): mixed
     {
 
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->post($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions' . $assignment);
+            $response = $client->post($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions' . $assignment);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -925,11 +925,11 @@ class CanvasUtil extends ProviderUtil
     public function getAssignmentSubmissions(string $courseId, string $assignmentId): mixed
     {
 
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions');
+            $response = $client->get($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -949,11 +949,11 @@ class CanvasUtil extends ProviderUtil
         **/
     public function getSubmissionsForMultipleAssignments(string $courseId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/students' .  '/submissions');
+            $response = $client->get($base_url . 'courses/' . $courseId . '/students' .  '/submissions');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -974,11 +974,11 @@ class CanvasUtil extends ProviderUtil
         **/
     public function getSubmissionForUser(string $courseId, string $assignmentId, string $userId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId);
+            $response = $client->get($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -999,11 +999,11 @@ class CanvasUtil extends ProviderUtil
         **/
     public function getSubmissionForAnonID(string $courseId, string $assignmentId, string $anonId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/anonymous_submissions' . $anonId);
+            $response = $client->get($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/anonymous_submissions' . $anonId);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -1024,13 +1024,13 @@ class CanvasUtil extends ProviderUtil
         **/
     public function uploadFileForSubmission(string $courseId, string $assignmentId, string $userId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->post($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId . 'files');
+            $response = $client->post($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId . 'files');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -1051,13 +1051,13 @@ class CanvasUtil extends ProviderUtil
         **/
     public function gradeOrCommentSubmission(string $courseId, string $assignmentId, string  $userId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->put($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId);
+            $response = $client->put($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -1078,11 +1078,11 @@ class CanvasUtil extends ProviderUtil
         **/
     public function gradeOrCommentSubmissionAnon(string $courseId, string $assignmentId, string $anonId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->put($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/anonymous_submissions' . $anonId);
+            $response = $client->put($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/anonymous_submissions' . $anonId);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -1102,11 +1102,11 @@ class CanvasUtil extends ProviderUtil
         **/
     public function listGradeableStudents(string $courseId, string $assignmentId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/gradeable_students');
+            $response = $client->get($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/gradeable_students');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -1125,11 +1125,11 @@ class CanvasUtil extends ProviderUtil
         **/
     public function listMultipleAssignmentsGradeableStudents(string $courseId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments' . '/gradeable_students');
+            $response = $client->get($base_url . 'courses/' . $courseId . '/assignments' . '/gradeable_students');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -1150,13 +1150,13 @@ class CanvasUtil extends ProviderUtil
         **/
     public function markSubmissionAsRead(string $courseId, string $assignmentId, string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->put($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read');
+            $response = $client->put($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -1179,13 +1179,13 @@ class CanvasUtil extends ProviderUtil
         **/
     public function markSubmissionItemAsRead(string $courseId, string $assignmentId, string $userId = 'self', string $item): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->put($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read' . $item);
+            $response = $client->put($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read' . $item);
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -1206,12 +1206,12 @@ class CanvasUtil extends ProviderUtil
         **/
     public function markSubmissionAsUnread(string $courseId, string $assignmentId, string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
         try {
-            $response = $client->delete($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read');
+            $response = $client->delete($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -1232,13 +1232,13 @@ class CanvasUtil extends ProviderUtil
         **/
     public function clearUnreadStatusForAllSubmissions(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
-            $response = $client->put($baseUrl . 'courses/' . $courseId . '/submissions/' . $userId . 'clear_unread');
+            $response = $client->put($base_url . 'courses/' . $courseId . '/submissions/' . $userId . 'clear_unread');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {
@@ -1258,11 +1258,11 @@ class CanvasUtil extends ProviderUtil
         **/
     public function getSubmissionSummary(string $courseId, string $assignmentId): mixed
     {
-        $baseUrl = $this->BaseUrl . "api/v1/";
-        $apiKey = $this->AccessKey;;
+        $base_url = $this->base_url . "api/v1/";
+        $apiKey = $this->access_key;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
-            $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submission_summary');
+            $response = $client->get($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submission_summary');
             if ($response->getStatusCode() == 200) {
                 return json_decode($response->getBody()->__toString());
             } else {

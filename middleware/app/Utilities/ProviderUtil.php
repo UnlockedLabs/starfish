@@ -1,20 +1,10 @@
 <?php
 
-use App\Models\LMSProvider;
 use App\Models\ProviderPlatform;
-use NunoMaduro\Collision\Provider;
 
 class ProviderUtil
 
 {
-    /// My Provider table has the following fields:
-    /*  'Id',
-        'Type',
-        'Name',
-        'AccountId',
-        'AccountName',
-        'AccessKey',
-        'BaseUrl', */
     protected string $id;
     protected string $type;
     protected int    $account_id;
@@ -23,17 +13,28 @@ class ProviderUtil
     protected string $base_url;
     protected string $icon_url;
 
-    public function __construct(string $Type, int $accountId, string $AccountName, string $AccessKey, string $BaseUrl, string $IconUrl)
+    public function __construct(string $Type, int $accountId, string $AccountName, string $access_key, string $base_url, string $IconUrl)
 
     {
         // we will not have generated a provider ID yet, we we construct and call registerProvider()
         $this->type = $Type;
         $this->account_id = $accountId;
         $this->account_name = $AccountName;
-        $this->access_key = $AccessKey;
-        $this->base_url = $BaseUrl;
+        $this->access_key = $access_key;
+        $this->base_url = $base_url;
         $this->icon_url = $IconUrl;
         $this->registerProvider();
+    }
+
+    // constructor for when we already have the providerId
+    public static function getByProviderId($providerId): ProviderUtil | \InvalidArgumentException
+    {
+        $provider = ProviderPlatform::findByProviderId($providerId);
+
+        if (!$provider) {
+            throw new \InvalidArgumentException('Invalid provider ID');
+        }
+        return new self($provider->type, $provider->account_id, $provider->account_name, $provider->access_key, $provider->base_url, $provider->icon_url);
     }
 
     function registerProvider()
@@ -101,22 +102,22 @@ class ProviderUtil
         $this->account_name = $accountName;
     }
 
-    public function getBaseUrl(): string
+    public function getbase_url(): string
     {
         return $this->base_url;
     }
 
-    public function setBaseUrl(string $url): void
+    public function setbase_url(string $url): void
     {
         $this->base_url = $url;
     }
 
-    public function getAccessKey(): string
+    public function getaccess_key(): string
     {
         return $this->access_key;
     }
 
-    public function setAccessKey(string $key): void
+    public function setaccess_key(string $key): void
     {
         $this->access_key = $key;
     }

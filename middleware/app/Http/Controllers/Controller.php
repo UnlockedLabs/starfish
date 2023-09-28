@@ -5,16 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-use app\Utilities\CanvasUtil;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
-
-    public static function getUsers()
-    {
-        $canvasUtil = new CanvasUtil();
-        $users = $canvasUtil->getUsers();
-        return route("index", $users);
-    }
 }
