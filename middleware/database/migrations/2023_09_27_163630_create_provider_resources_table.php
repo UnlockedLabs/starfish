@@ -12,8 +12,9 @@ class CreateProviderResourcesTable extends Migration
             $table->id();
             $table->integer('resource_id');
             $table->integer('external_resource_id');
-            $table->string('provider_resource_type'); // You can change the type to 'enum' if needed.
+            $table->string('provider_resource_type');
             $table->integer('provider_platform_id');
+            $table->string('user_id');
             $table->timestamps();
         });
     }

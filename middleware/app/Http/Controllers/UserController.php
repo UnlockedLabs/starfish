@@ -4,29 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Utilities\CanvasUtil\getByProviderId;
 use App\Models\ProviderPlatform;
-use Ramsey\Collection\Map\AssociativeArrayMap;
 
 class UserController extends Controller
 {
-    // ****************************************************
-    // response to POST: /api/providers/{provider}
-    // ****************************************************
-    public function registerProvider(Request $req): \Illuminate\Http\JsonResponse
-    {
-        $Type = $req->input('Type');
-        $AccountId = $req->input('AccountId');
-        $AccountName = $req->input('AccountName');
-        $BaseUrl = $req->input('type');
-        $AccessKey = $req->input('AccessKey');
-        $url = $req->input('url');
-        // Here we get register the provdider into our database, and generate/get the UUID
-        // for the provider
-        $provider = new \ProviderUtil($Type, $AccountId, $AccountName, $AccessKey, $BaseUrl);
-        return response()->json($provider->getProviderId());
-    }
-
     // ****************************************************
     // our response to GET: /api/user/{user_id}/courses
     //*****************************************************
@@ -42,18 +23,20 @@ class UserController extends Controller
         $links = [];
 
         if (!count($providerIds)) {
-            return response()->json(['error' => 'Multiple Providers Not Supported'], 400);
+            // Here is where we would call a function to register the student in all downstream providers
+            return response()->json(['error' => 'There are no registerd providers for this student ID'], 400);
         } else {
             foreach ($providerIds as $id) {
                 // Each iteration will instantiate a new CanvasUtil object
                 // and query the Canvas API for the user's courses
                 $canvasUtil = \CanvasUtil::getByProviderId($id);
                 $enrollments = $canvasUtil->listCoursesForUser($userId);
-
+                // Obviously we would just query the DB and return the enrollments for the user,
+                // but for the prototype we demonstrate how the information is fetched.
                 foreach ($enrollments as $course) {
                     $courseId = $course->id;
                     $courseName = $course->name;
-                    $canvasApiUrl = $canvasUtil->getUrl() . "api/v1/courses/" . $courseId;
+                    $canvasApiUrl = $canvasUtil->getBaseUrl() . "api/v1/courses/" . $courseId;
 
                     // Create the LTI deep linking JSON structure
                     $link = [
