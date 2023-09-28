@@ -1,116 +1,133 @@
 <?php
 
 use App\Models\LMSProvider;
+use App\Models\ProviderPlatform;
+use NunoMaduro\Collision\Provider;
 
 class ProviderUtil
 
 {
     /// My Provider table has the following fields:
-    /// providerId VARCHAR(255) PRIMARY KEY, (our UUID we give to the specific LMS + instance + account)
-    /// providerType CARCHAR(255) NOT NULL, (Canvas-cloud, canvas-oss, blackboard, moodle, etc)
-    /// instanceId   VARCHAR(255) NOT NULL, (the id for the specific instance of the LMS)
-    /// accoundId    VARCHAR(255) NOT NULL, (the id for the specific account of the provider on the LMS)
-    /// url          VARCHAR(255) NOT NULL, (the base url to the instance of the LMS)
-    /// apiKey
-    protected string $providerId;
-    protected string $providerType;
-    protected int    $accountId;
-    protected string $instanceId;
-    protected string $url;
+    /*  'Id',
+        'Type',
+        'Name',
+        'AccountId',
+        'AccountName',
+        'AccessKey',
+        'BaseUrl', */
+    protected string $id;
+    protected string $type;
+    protected int    $account_id;
+    protected string $account_name;
+    protected string $access_key;
+    protected string $base_url;
+    protected string $icon_url;
 
-
-    public function __construct(string $providerType, int $accountId, string $instanceId, string $url)
+    public function __construct(string $Type, int $accountId, string $AccountName, string $AccessKey, string $BaseUrl, string $IconUrl)
 
     {
-        // we will not have generated a provider UUID yet, we we construct and call registerProvider()
-        $this->providerType = $providerType;
-        $this->accountId = $accountId;
-        $this->url = $url;
-        $this->instanceId = $this->$instanceId;
-        // Register the provider in the database and generate providerID
+        // we will not have generated a provider ID yet, we we construct and call registerProvider()
+        $this->type = $Type;
+        $this->account_id = $accountId;
+        $this->account_name = $AccountName;
+        $this->access_key = $AccessKey;
+        $this->base_url = $BaseUrl;
+        $this->icon_url = $IconUrl;
         $this->registerProvider();
     }
 
-    public function registerProvider()
+    function registerProvider()
     {
         // Check if the provider already exists in the database, these fields are unique
-        $existingProvider = LMSProvider::where([
-            'instanceId' => $this->instanceId,
-            'accountId' => $this->accountId,
-            'providerType' => $this->providerType,
+        $existingProvider = ProviderPlatform::where([
+            'base_url' => $this->base_url,
+            'account_id' => $this->account_id,
+            'type' => $this->type,
         ])->first();
 
         if (!$existingProvider) {
-            // Generate UUID based on instanceId, accountId, and providerType
-            $uuid = $this->generateUUID();
 
             // Create a new provider instance and save it to the database
-            $newProvider = new LMSProvider([
-                'providerId' => $uuid,
-                'providerType' => $this->providerType,
-                'instanceId' => $this->instanceId,
-                'accountId' => $this->accountId,
-                'url' => $this->url,
+            $newProvider = new ProviderPlatform([
+                'type' => $this->type,
+                'accountId' => $this->account_id,
+                'account_name' => $this->account_name,
+                'access_key' => $this->access_key,
+                'base_url' => $this->base_url,
             ]);
 
             $newProvider->save();
 
             // if newly registered, we store and add created provider ID field
-            $this->providerId = $uuid;
+            $this->id = $newProvider->id;
         }
 
         // Provider already exists, return it
         return $existingProvider;
     }
 
-    private function generateUUID()
-    {
-        // Just an example of how we could generate a UUID for the specific provider
-        return md5($this->instanceId . $this->accountId . $this->providerType);
-    }
-
     public function getProviderId(): string
     {
-        return $this->providerId;
+        return $this->id;
     }
 
     public function getProviderType(): string
     {
-        return $this->providerType;
+        return $this->type;
     }
 
     public function setProviderType(string $providerType): void
     {
-        $this->providerType = $providerType;
+        $this->type = $providerType;
     }
 
     public function getAccountId(): int
     {
-        return $this->accountId;
+        return $this->account_id;
     }
 
     public function setAccountId(int $accountId): void
     {
-        $this->accountId = $accountId;
+        $this->account_id = $accountId;
     }
 
-    public function getInstanceId(): string
+    public function getAccountName(): string
     {
-        return $this->instanceId;
+        return $this->account_name;
     }
 
-    public function setInstanceId(string $instanceId): void
+    public function setInstanceId(string $accountName): void
     {
-        $this->instanceId = $instanceId;
+        $this->account_name = $accountName;
     }
 
-    public function getUrl(): string
+    public function getBaseUrl(): string
     {
-        return $this->url;
+        return $this->base_url;
     }
 
-    public function setUrl(string $url): void
+    public function setBaseUrl(string $url): void
     {
-        $this->url = $url;
+        $this->base_url = $url;
+    }
+
+    public function getAccessKey(): string
+    {
+        return $this->access_key;
+    }
+
+    public function setAccessKey(string $key): void
+    {
+        $this->access_key = $key;
+    }
+
+    public function getIconUrl(): string
+    {
+        return $this->icon_url;
+    }
+
+    public function setIconUrl(string $url): void
+    {
+        $this->icon_url = $url;
     }
 }

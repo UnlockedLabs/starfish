@@ -20,7 +20,7 @@ export default function Dropdown({
 
   const widthClass = {
     '48': 'w-48',
-  }[width.toString()];
+  }[width.--toString()()];
 
   const alignmentClasses = (() => {
     if (align === 'left') {

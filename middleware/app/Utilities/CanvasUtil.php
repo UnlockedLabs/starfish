@@ -1,28 +1,30 @@
 <?php
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-
 declare(strict_types=1);
 
-enum CanvasType
-{
-    case CLOUD;
-    case OSS;
-}
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use App\Models\ProviderPlatform;
+
 
 class CanvasUtil extends ProviderUtil
 {
-    const CLOUD = 'cloud';
-    const OSS = 'oss';
 
-
-    public function __construct(int $accountId, string $url, CanvasType $type, string $instanceId)
+    public function __construct(string $type, int $accountId, string $accountName, string $apiKey, string $url, string $iconUrl)
     {
-        match ($type) {
-            CanvasType::OSS => parent::__construct(CanvasUtil::OSS, $accountId, $instanceId, $url),
-            CanvasType::CLOUD => parent::__construct(CanvasUtil::CLOUD, $accountId, $instanceId, $url),
-        };
+        return parent::__construct($type, $accountId,  $accountName, $apiKey, $url, $iconUrl);
+    }
+
+
+    // constructor for when we already have the providerId
+    public static function getByProviderId($providerId): CanvasUtil | \InvalidArgumentException
+    {
+        $provider = ProviderPlatform::findByProviderId($providerId);
+
+        if (!$provider) {
+            throw new \InvalidArgumentException('Invalid provider ID');
+        }
+        return new self($provider->type, $provider->account_id, $provider->account_name, $provider->access_key, $provider->base_url, $provider->icon_url);
     }
 
     /**
@@ -32,7 +34,7 @@ class CanvasUtil extends ProviderUtil
      * @return string Formatted account or user ID
      * @throws \InvalidArgumentException If the account ID is invalid
      */
-    public static function fmtAndValidateId(string $id): string
+    public function fmtAndValidateId(string $id): string
     {
         if ($id === 'self' || is_numeric($id)) {
             // Append a trailing slash if needed
@@ -55,14 +57,14 @@ class CanvasUtil extends ProviderUtil
      * AccountId can be accessed via the field in the class,
      * but it seems most of the time it will be self.
      */
-    public static function listUsers(string $accountId = 'self'): mixed
+    public function listUsers(string $accountId = 'self'): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $accessToken = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $AccessKey = $this->AccessKey;
 
         $client = new Client([
             'headers' => [
-                'Authorization' => 'Bearer ' . $accessToken,
+                'Authorization' => 'Bearer ' . $AccessKey,
             ],
         ]);
         $accountId = self::fmtAndValidateId($accountId);
@@ -70,7 +72,7 @@ class CanvasUtil extends ProviderUtil
             $response = $client->get($baseUrl . 'accounts/' . $accountId . 'users');
 
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
 
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
@@ -86,15 +88,15 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws \Exception
      */
-    public static function showUserDetails(string $userId = 'self'): mixed
+    public function showUserDetails(string $userId = 'self'): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $accessToken = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $AccessKey = $this->AccessKey;
 
         $client = new Client([
             'base_uri' => $baseUrl,
             'headers' => [
-                'Authorization' => 'Bearer ' . $accessToken,
+                'Authorization' => 'Bearer ' . $AccessKey,
             ],
         ]);
         $userId = self::fmtAndValidateId($userId);
@@ -102,7 +104,7 @@ class CanvasUtil extends ProviderUtil
             $response = $client->get($baseUrl . 'users/' . $userId);
 
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -136,8 +138,8 @@ class CanvasUtil extends ProviderUtil
             ],
             'force_validations' => true,
         ];
-        $baseUrl = env('CANVAS_API');
-        $apiKey = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -146,7 +148,7 @@ class CanvasUtil extends ProviderUtil
             $response = $client->post($baseUrl . "accounts/self/users/", $userData);
 
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -164,8 +166,8 @@ class CanvasUtil extends ProviderUtil
      */
     public function listActivityStream(string $account = 'self'): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $apiKey = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -175,7 +177,7 @@ class CanvasUtil extends ProviderUtil
 
             $response = $client->get($baseUrl . 'users/' . $account . 'activity_stream');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -190,10 +192,10 @@ class CanvasUtil extends ProviderUtil
      * @return mixed (decoded json)
      * @throws \Exception
      */
-    public static function getActivityStreamSummary(string $account = 'self'): mixed
+    public function getActivityStreamSummary(string $account = 'self'): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $apiKey = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -203,7 +205,7 @@ class CanvasUtil extends ProviderUtil
         try {
             $response = $client->get($baseUrl . 'users/' .  $account . 'activity_stream/summary');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -218,10 +220,10 @@ class CanvasUtil extends ProviderUtil
      * @return mixed (decoded json)
      * @throws \Exception
      */
-    public static function listTodoItems(string $account = 'self'): mixed
+    public function listTodoItems(string $account = 'self'): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $apiKey = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -231,7 +233,7 @@ class CanvasUtil extends ProviderUtil
         try {
             $response = $client->get($baseUrl . 'users/' .  $account . 'todo');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -246,10 +248,10 @@ class CanvasUtil extends ProviderUtil
      * @return mixed (decoded json)
      *
      **/
-    public static function getTodoItemsCount(string $account = 'self'): mixed
+    public function getTodoItemsCount(string $account = 'self'): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $apiKey = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -259,7 +261,7 @@ class CanvasUtil extends ProviderUtil
         try {
             $response = $client->get($baseUrl . 'users/' .  $account . 'todo_item_count');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -275,10 +277,10 @@ class CanvasUtil extends ProviderUtil
      * @throws \Exception
      */
 
-    public static function listUpcomingAssignments(string $userId = 'self'): mixed
+    public function listUpcomingAssignments(string $userId = 'self'): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $apiKey = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -288,7 +290,7 @@ class CanvasUtil extends ProviderUtil
         try {
             $response = $client->get($baseUrl . 'users/' .  $userId . 'upcoming_events');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -303,10 +305,10 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws \Exception
      */
-    public static function listMissingSubmissions(string $userId = 'self'): mixed
+    public function listMissingSubmissions(string $userId = 'self'): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $apiKey = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -316,7 +318,7 @@ class CanvasUtil extends ProviderUtil
         try {
             $response = $client->get($baseUrl . 'users/' .  $userId . 'missing_submissions');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -329,10 +331,10 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws \Exception
      **/
-    public static function listCourses(): mixed
+    public function listCourses(): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $apiKey = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -340,7 +342,7 @@ class CanvasUtil extends ProviderUtil
         try {
             $response = $client->get($baseUrl . 'courses');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -350,14 +352,16 @@ class CanvasUtil extends ProviderUtil
     }
     /**
      * List Courses from Canvas per User
-     * @param string $userId
+     * This returns the full User object complete with an array of course items
+     * that the user should be enrolled in.
+     * @param string $userI
      * @return mixed JSON decoded
      * @throws \Exception
      **/
-    public static function listCoursesForUser(string $userId = 'self'): mixed
+    public function listCoursesForUser(string $userId = 'self'): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $apiKey = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;
 
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
@@ -367,7 +371,7 @@ class CanvasUtil extends ProviderUtil
         try {
             $response = $client->get($baseUrl . 'users/' . $userId . 'courses');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -389,10 +393,10 @@ class CanvasUtil extends ProviderUtil
      * in a course. To query another user’s progress, you must be a
      * teacher in the course, an administrator, or a linked observer of the user."
      * */
-    public static function getUserCourseProgress(string $userId = 'self', string $courseId): mixed
+    public function getUserCourseProgress(string $userId = 'self', string $courseId): mixed
     {
-        $baseUrl = env('CANVAS_API');
-        $apiKey = env('CANVAS_API_KEY');
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;
         $client = new Client([
             'Authorization' => 'Bearer ' . $apiKey,
         ]);
@@ -401,7 +405,7 @@ class CanvasUtil extends ProviderUtil
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/users/' . $userId . 'progress');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -415,17 +419,17 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws \Exception
      * */
-    public static function getEnrollmentsByUser(string $userId): mixed
+    public function getEnrollmentsByUser(string $userId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->get($baseUrl . 'users/' . $userId . 'enrollments');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -439,16 +443,16 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws \Exception
      **/
-    public static function getEnrollmentsByCourse(string $courseId): mixed
+    public function getEnrollmentsByCourse(string $courseId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
 
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/enrollments');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -462,15 +466,15 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws \Exception
      **/
-    public static function getEnrollmentsBySection(string $sectionId): mixed
+    public function getEnrollmentsBySection(string $sectionId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'sections/' . $sectionId . '/enrollments');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -487,21 +491,21 @@ class CanvasUtil extends ProviderUtil
      * @throws \Exception
      * @return mixed JSON decoded
      **/
-    public static function enrollUser(string $userId, string $type = "StudentEnrollment", string $courseId): mixed
+    public function enrollUser(string $userId, string $type = "StudentEnrollment", string $courseId): mixed
     {
         $enrollment = [
             'user_id' => [$userId],
             'type' => [$type],
         ];
 
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
 
         try {
             $response = $client->post($baseUrl . 'courses/' . $courseId . '/enrollments' . $enrollment);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -518,19 +522,19 @@ class CanvasUtil extends ProviderUtil
      * @return mixed decoded JSON
      * @throws Exception
      **/
-    public static function enrollUserInSection(string $sectionId, string $userId, string $type = "StudentEnrollment"): mixed
+    public function enrollUserInSection(string $sectionId, string $userId, string $type = "StudentEnrollment"): mixed
     {
         $enrollment = [
             'user_id' => [$userId],
             'type' => [$type],
         ];
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->post($baseUrl . 'sections/' . $sectionId . '/enrollments' . $enrollment);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -545,15 +549,15 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws Exception
      */
-    public static function deleteEnrollment(string $enrollmentId, string $courseId): mixed
+    public function deleteEnrollment(string $enrollmentId, string $courseId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->delete($baseUrl . 'courses/' . $courseId . '/enrollments/' . $enrollmentId);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -568,17 +572,17 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws Exception
      */
-    public static function acceptCourseInvitation(string $courseId, string $userId = 'self'): mixed
+    public function acceptCourseInvitation(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->post($baseUrl . 'courses/' . $courseId . '/enrollments/' . $userId . 'accept');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -593,17 +597,17 @@ class CanvasUtil extends ProviderUtil
      * @return mixed decoded JSON
      * @throws Exception
      */
-    public static function rejectCourseInvitation(string $courseId, string $userId = 'self'): mixed
+    public function rejectCourseInvitation(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->post($baseUrl . 'courses/' . $courseId . '/enrollments/' . $userId . 'reject');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -618,17 +622,17 @@ class CanvasUtil extends ProviderUtil
      * @return mixed decoded JSON
      * @throws Exception
      **/
-    public static function reactivateCourseEnrollment(string $courseId, string $userId = 'self'): mixed
+    public function reactivateCourseEnrollment(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->put($baseUrl . 'courses/' . $courseId . '/enrollments/' . $userId . 'reactivate');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -643,17 +647,17 @@ class CanvasUtil extends ProviderUtil
      * @return mixed decoded JSON
      * @throws Exception
      **/
-    public static function addLastAttendedDate(string $courseId, string $userId = 'self'): mixed
+    public function addLastAttendedDate(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->put($baseUrl . 'courses/' . $courseId . '/enrollments/' . $userId . 'last_attended');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -668,17 +672,17 @@ class CanvasUtil extends ProviderUtil
      * @return mixed decoded JSON
      * @throws Exception
      **/
-    public static function queryUserProgress(string $userId = 'self'): mixed
+    public function queryUserProgress(string $userId = 'self'): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->get($baseUrl . 'progress/' . $userId);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -692,16 +696,16 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws Exception
      **/
-    public static function cancelUserProgress(string $userId = 'self'): mixed
+    public function cancelUserProgress(string $userId = 'self'): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
         try {
             $response = $client->post($baseUrl . 'progress/' . $userId);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -716,17 +720,17 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws Exception
      **/
-    public static function listAssignmentsForUser(string $courseId, string $userId = 'self'): mixed
+    public function listAssignmentsForUser(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->get($baseUrl . 'users/' . $userId . 'courses' . $courseId . '/assignments');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -740,15 +744,15 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws Exception
      **/
-    public static function listAssignmentsByCourse(string $courseId): mixed
+    public function listAssignmentsByCourse(string $courseId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -762,15 +766,15 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws Exception
      **/
-    public static function listAssignmentGroupsByCourse(string $assignmentGroupId, string $courseId): mixed
+    public function listAssignmentGroupsByCourse(string $assignmentGroupId, string $courseId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignment_groups/' . $assignmentGroupId . '/assignments');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -785,15 +789,15 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws Exception
      **/
-    public static function deleteAssignment(string $courseId, string $assignmentId): mixed
+    public function deleteAssignment(string $courseId, string $assignmentId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->delete($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -809,15 +813,15 @@ class CanvasUtil extends ProviderUtil
      * @return mixed JSON decoded
      * @throws Exception
      **/
-    public static function getAssignment(string $courseId, string $assignmentId): mixed
+    public function getAssignment(string $courseId, string $assignmentId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -836,15 +840,15 @@ class CanvasUtil extends ProviderUtil
         * @return mixed JSON decoded
         * @throws Exception
         **/
-    public static function createAssignmentForCourse(array $assignmentInfo, string $courseId): mixed
+    public function createAssignmentForCourse(array $assignmentInfo, string $courseId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->post($baseUrl . 'courses/' . $courseId . '/assignments' . $assignmentInfo);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -865,15 +869,15 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function editAssignmentForCourse(array $assignmentInfo, string $courseId, string  $assignmentId): mixed
+    public function editAssignmentForCourse(array $assignmentInfo, string $courseId, string  $assignmentId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->put($baseUrl . 'courses/' . $courseId . '/assignments' . $assignmentId . '/' . $assignmentInfo);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -893,16 +897,16 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function submitAssignment(string $courseId, string $assignmentId, array $assignment): mixed
+    public function submitAssignment(string $courseId, string $assignmentId, array $assignment): mixed
     {
 
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->post($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions' . $assignment);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -918,16 +922,16 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function getAssignmentSubmissions(string $courseId, string $assignmentId): mixed
+    public function getAssignmentSubmissions(string $courseId, string $assignmentId): mixed
     {
 
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -943,15 +947,15 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function getSubmissionsForMultipleAssignments(string $courseId): mixed
+    public function getSubmissionsForMultipleAssignments(string $courseId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/students' .  '/submissions');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -968,15 +972,15 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function getSubmissionForUser(string $courseId, string $assignmentId, string $userId): mixed
+    public function getSubmissionForUser(string $courseId, string $assignmentId, string $userId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -993,15 +997,15 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function getSubmissionForAnonID(string $courseId, string $assignmentId, string $anonId): mixed
+    public function getSubmissionForAnonID(string $courseId, string $assignmentId, string $anonId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/anonymous_submissions' . $anonId);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -1018,17 +1022,17 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function uploadFileForSubmission(string $courseId, string $assignmentId, string $userId): mixed
+    public function uploadFileForSubmission(string $courseId, string $assignmentId, string $userId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->post($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId . 'files');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -1045,17 +1049,17 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function gradeOrCommentSubmission(string $courseId, string $assignmentId, string  $userId): mixed
+    public function gradeOrCommentSubmission(string $courseId, string $assignmentId, string  $userId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->put($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -1072,15 +1076,15 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function gradeOrCommentSubmissionAnon(string $courseId, string $assignmentId, string $anonId): mixed
+    public function gradeOrCommentSubmissionAnon(string $courseId, string $assignmentId, string $anonId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->put($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/anonymous_submissions' . $anonId);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -1096,15 +1100,15 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function listGradeableStudents(string $courseId, string $assignmentId): mixed
+    public function listGradeableStudents(string $courseId, string $assignmentId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/gradeable_students');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -1119,15 +1123,15 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function listMultipleAssignmentsGradeableStudents(string $courseId): mixed
+    public function listMultipleAssignmentsGradeableStudents(string $courseId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments' . '/gradeable_students');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -1144,17 +1148,17 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function markSubmissionAsRead(string $courseId, string $assignmentId, string $userId = 'self'): mixed
+    public function markSubmissionAsRead(string $courseId, string $assignmentId, string $userId = 'self'): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->put($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -1173,17 +1177,17 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function markSubmissionItemAsRead(string $courseId, string $assignmentId, string $userId = 'self', string $item): mixed
+    public function markSubmissionItemAsRead(string $courseId, string $assignmentId, string $userId = 'self', string $item): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->put($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read' . $item);
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -1200,16 +1204,16 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function markSubmissionAsUnread(string $courseId, string $assignmentId, string $userId = 'self'): mixed
+    public function markSubmissionAsUnread(string $courseId, string $assignmentId, string $userId = 'self'): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
         try {
             $response = $client->delete($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -1226,17 +1230,17 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function clearUnreadStatusForAllSubmissions(string $courseId, string $userId = 'self'): mixed
+    public function clearUnreadStatusForAllSubmissions(string $courseId, string $userId = 'self'): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         $userId = self::fmtAndValidateId($userId);
 
         try {
             $response = $client->put($baseUrl . 'courses/' . $courseId . '/submissions/' . $userId . 'clear_unread');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
@@ -1252,15 +1256,15 @@ class CanvasUtil extends ProviderUtil
         * @return mixed decoded JSON
         * @throws Exception
         **/
-    public static function getSubmissionSummary(string $courseId, string $assignmentId): mixed
+    public function getSubmissionSummary(string $courseId, string $assignmentId): mixed
     {
-        $baseUrl = env("CANVAS_API");
-        $apiKey = env("CANVAS_API_KEY");
+        $baseUrl = $this->BaseUrl . "api/v1/";
+        $apiKey = $this->AccessKey;;
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($baseUrl . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submission_summary');
             if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody());
+                return json_decode($response->getBody()->__toString());
             } else {
                 throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
             }
