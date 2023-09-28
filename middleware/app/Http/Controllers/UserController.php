@@ -36,7 +36,7 @@ class UserController extends Controller
                 foreach ($enrollments as $course) {
                     $courseId = $course->id;
                     $courseName = $course->name;
-                    $canvasApiUrl = $canvasUtil->getBaseUrl() . "api/v1/courses/" . $courseId;
+                    $canvasApiUrl = $canvasUtil->getbase_url() . "api/v1/courses/" . $courseId;
 
                     // Create the LTI deep linking JSON structure
                     $link = [
