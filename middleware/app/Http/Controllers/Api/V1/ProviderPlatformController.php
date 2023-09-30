@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProviderPlatformRequest;
 use App\Http\Requests\UpdateProviderPlatformRequest;
+use App\Http\Resources\ProviderPlatformResource;
 use App\Models\ProviderPlatform;
 
 class ProviderPlatformController extends Controller
@@ -14,7 +15,7 @@ class ProviderPlatformController extends Controller
      */
     public function index()
     {
-        return ProviderPlatform::all();
+        return ProviderPlatformResource::collection(ProviderPlatform::all());
 
         // return ProviderPlatform::all();
     }
@@ -40,7 +41,7 @@ class ProviderPlatformController extends Controller
      */
     public function show(ProviderPlatform $providerPlatform)
     {
-        //
+        return ProviderPlatformResource::make($providerPlatform);
     }
 
     /**
