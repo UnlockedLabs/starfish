@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\V1\ConsumerPlatformController;
+use App\Http\Controllers\Api\V1\PlatformConnectionController;
 use App\Http\Controllers\Api\V1\ProviderPlatformController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,8 +18,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
+    Route::get('/{consumer_platform_id}/provider_platforms', [ProviderPlatformController::class, 'hello']);
     Route::apiResource('/provider_platforms', ProviderPlatformController::class);
+    Route::apiResource('/consumer_platforms', ConsumerPlatformController::class);
+    Route::apiResource('/platform_connections', PlatformConnectionController::class);
 });
+
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

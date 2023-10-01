@@ -5,17 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProviderPlatform extends Model
+class PlatformConnection extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'type',
-        'name',
-        'description',
-        'icon_url',
-        'account_id',
-        'access_key',
-        'base_url',
+        'consumer_platform_id',
+        'provider_platform_id',
+        // 'state',
     ];
 }

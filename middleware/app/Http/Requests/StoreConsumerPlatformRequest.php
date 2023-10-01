@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProviderPlatformRequest extends FormRequest
+class StoreConsumerPlatformRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,9 @@ class StoreProviderPlatformRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
-            'description' => 'nullable|string|max:255',
-            'icon_url' => 'required|url:http,https',
-            'account_id' => 'required|unique:provider_platforms,account_id',
-            'access_key' => 'required|unique:provider_platforms,access_key',
+            'name' => 'required|string|max:255',
+            'api_key' => 'required|unique:consumer_platforms,api_key',
             'base_url' => 'required|url:http,https',
         ];
     }

@@ -20,6 +20,11 @@ class ProviderPlatformController extends Controller
         // return ProviderPlatform::all();
     }
 
+    public function hello(string $message)
+    {
+        return $message;
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -33,7 +38,9 @@ class ProviderPlatformController extends Controller
      */
     public function store(StoreProviderPlatformRequest $request)
     {
-        //
+        $providerPlatform = ProviderPlatform::create($request->validated());
+
+        return ProviderPlatformResource::make($providerPlatform);
     }
 
     /**
