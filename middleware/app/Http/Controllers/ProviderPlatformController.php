@@ -3,23 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\PlatformConnection;
 
 class ProviderPlatformController extends Controller
 {
     // ****************************************************
-    // response to POST: /api/providers/{provider}
+    //  POST: /api/provider_platform/{provider}
     // ****************************************************
     public function registerProvider(Request $req): \Illuminate\Http\JsonResponse
     {
-        $Type = $req->input('type');
-        $AccountId = $req->input('account_id');
-        $AccountName = $req->input('account_name');
+        $consumer_id = $req->input('consumer_id');
+        $type = $req->input('type');
+        $account_id = $req->input('account_id');
+        $account_name = $req->input('account_name');
         $access_key = $req->input('access_key');
         $base_url = $req->input('base_url');
-        $IconUrl = $req->input('iconUrl');
+        $icon_url = $req->input('iconUrl');
 
         // Create a new provider, return the provider ID
-        $provider = new \ProviderUtil($Type, $AccountId, $AccountName, $access_key, $base_url, $IconUrl);
+        $provider = new \ProviderUtil($type, $account_id, $account_name, $access_key, $base_url, $icon_url);
+
+        // Create a new platform connection.
+        new PlatformConnection($consumer_id, $provider->getProviderId());
+
         return response()->json($provider->getProviderId());
     }
 }
