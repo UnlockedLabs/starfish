@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('platform_connection', function (Blueprint $table) {
             $table->id();
+            $table->integer('consumer_platform_id')->unsigned();
+            $table->integer('provider_platform_id')->unsigned();
+            $table->string('state');
+            $table->foreign('consumer_platform_id')->references('id')->on('platform');
+            $table->foreign('provider_platform_id')->references('id')->on('platform');
             $table->timestamps();
         });
     }

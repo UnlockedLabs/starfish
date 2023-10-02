@@ -10,8 +10,6 @@ class ProviderPlatform extends Model
 {
     use HasFactory;
 
-    protected $table = 'providers';
-
     protected $fillable = [
         'id',
         'type',
