@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ConsumerPlatform extends Model
 {
@@ -18,6 +19,10 @@ class ConsumerPlatform extends Model
 
     protected $hidden = [
         'api_key',
+    ];
+
+    protected $casts = [
+        'type' => ConsumerPlatformType::class
     ];
 
     public function platformConnections(): HasMany
