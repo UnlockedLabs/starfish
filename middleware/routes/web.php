@@ -34,6 +34,3 @@ Route::middleware([
     })->name('dashboard');
 });
 Route::get('/users', [App\Http\Controllers\Controller::class, 'index']);
-
-Route::any('/lti', [App\Http\Controllers\LtiController::class, 'ltiMessage']);
-Route::get('/lti/jwks', [App\Http\Controllers\LtiController::class, 'getJWKS']);

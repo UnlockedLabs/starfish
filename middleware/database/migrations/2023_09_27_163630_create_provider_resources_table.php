@@ -10,11 +10,10 @@ class CreateProviderResourcesTable extends Migration
     {
         Schema::create('provider_resources', function (Blueprint $table) {
             $table->id();
-            $table->integer('resource_id');
+            $table->foreign('resource_id')->constrained();
             $table->integer('external_resource_id');
             $table->string('provider_resource_type');
-            $table->integer('provider_platform_id');
-            $table->string('user_id');
+            $table->foreign('provider_platform_id')->constrained();
             $table->timestamps();
         });
     }

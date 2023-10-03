@@ -3,6 +3,16 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+/*
+
+Type: string ('Unlockedv1', etc.)
+
+Name: string
+
+ApiKey: string
+
+BaseUrl: string
+*/
 
 return new class extends Migration
 {
@@ -13,7 +23,10 @@ return new class extends Migration
     {
         Schema::create('consumer_platform', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('type');
+            $table->string('name');
+            $table->string('api_key');
+            $table->string('base_url');
         });
     }
 

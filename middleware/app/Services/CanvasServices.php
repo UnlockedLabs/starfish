@@ -7,17 +7,28 @@ use GuzzleHttp\Exception\RequestException;
 use App\Models\ProviderPlatform;
 
 
-class CanvasUtil extends ProviderUtil
+class CanvasServices
 {
+    private int $provider_id;
+    private int $account_id;
+    private string $access_key;
+    private string $base_url;
 
-    public function __construct(string $type, int $accountId, string $accountName, string $apiKey, string $url, string $iconUrl)
+    public function __construct(int $providerId, int $accountId, string $apiKey, string $url)
     {
-        return parent::__construct($type, $accountId,  $accountName, $apiKey, $url, $iconUrl);
+        $this->provider_id = $providerId;
+        $this->account_id = $accountId;
+        $this->access_key =  $apiKey;
+        $this->base_url = $url;
+    }
+    public function getBaseUrl(): string
+    {
+        return $this->base_url;
     }
 
 
     // constructor for when we already have the providerId
-    public static function getByProviderId($providerId): CanvasUtil | \InvalidArgumentException
+    public static function getByProviderId($providerId): CanvasServices | \InvalidArgumentException
     {
         $provider = ProviderPlatform::findByProviderId($providerId);
 
