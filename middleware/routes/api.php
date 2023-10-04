@@ -18,4 +18,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/users/{user_id}/courses', [App\Http\Controllers\ProviderUserController::class, 'getProviderUserResources']);
+Route::get('/provider_users/{user_id}/courses', [App\Http\Controllers\ProviderUserController::class, 'getProviderUserResources']);
+
+Route::post('/provider_platforms', [App\Http\Controllers\ProviderPlatformController::class, 'registerProvider']);

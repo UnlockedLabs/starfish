@@ -21,13 +21,12 @@ class ProviderUserController extends Controller
     // Eventually we will establish some kind of caching system, possibly with REDIS.
     // storing the date of the last request, matching against the current date and
     // making sure we only perform these calls once a day.
-    public function getProviderUserResources(Request $request): \Illuminate\Http\JsonResponse
+    public function getProviderUserResources(Request $request): Illuminate\Http\JsonResponse
     {
         $userId = $request->input('user_id');
         if (!$userId) {
             return response()->json(['error' => 'Missing user_id'], 400);
         }
-
         // Get all the available provider IDs
         $providerIds = ProviderPlatform::getAllProviderIds();
         $links = [];
@@ -43,68 +42,46 @@ class ProviderUserController extends Controller
                 $enrollments = $canvasUtil->listCoursesForUser($userId);
                 // Obviously we would just query the DB and return the enrollments for the user,
                 // but for the prototype we demonstrate how the information is fetched.
+                $links = [];
                 foreach ($enrollments as $course) {
-                    $courseId = $course->id;
-                    $courseName = $course->name;
-                    $canvasApiUrl = $canvasUtil->getBaseUrl() . "api/v1/courses/" . $courseId;
-
                     // Create the LTI deep linking JSON structure
-                    $link = [
-                        'type' => 'link',
-                        'title' => $courseName,
-                        'url' => $canvasApiUrl,
-                    ];
-
+                    $link = \ProviderServices::encodeDeepLinkingJson($course->id, $course->name, $canvasUtil->getBaseUrl());
+                    // append each resource link
                     $links[] = $link;
                 }
+                if (empty($links)) {
+                    return response()->json(['error' => 'No Provider Resources Found'], 400);
+                }
+                // Wrap the links in a container object if needed
+                $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $links];
+                return response()->json($response);
             }
-            if (empty($links)) {
-                return response()->json(['error' => 'No Courses Found'], 400);
-            }
-            // Wrap the links in a container object if needed
-            $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $links];
-
-            return response()->json($response);
         }
     }
 
-    public function getUserCoursesCached(Request $request): \Illuminate\Http\JsonResponse
+    // This would be the cached version of the above function
+    /* ****************************************************
+    * route::get('/api/users/{user_id}/courses')
+    * *****************************************************
+    * Eventually we will establish some kind of caching system, possibly with REDIS.
+    * storing the date of the last request, matching against the current date and
+    * making sure we only perform these calls once a day.
+    */
+    public function getUserCoursesCached(Request $request): string | \InvalidArgumentException
     {
         $userId = $request->input('user_id');
         if (!$userId) {
             return response()->json(['error' => 'Missing user_id'], 400);
         }
-
-        // Get all the available provider IDs
-        $providerIds = ProviderPlatform::getAllProviderIds();
+        $enrollments = \App\Models\ProviderUserResource::where('user_id', $userId)->get();
         $links = [];
-
-        if (!count($providerIds)) {
-            return response()->json(['error' => 'There are no registerd providers for this student ID'], 400);
-        } else {
-            foreach ($providerIds as $id) {
-                $userResource = ProviderUserResource::where('user_id', $userId)->where('provider_id', $id)->first();
-                // we need to query the UserResource table to see if we have courses cached for this user
-                if ($userResource) {
-                    // we have cached courses for this user, so we will use them
-
-                    // Create the LTI deep linking JSON structure
-                    $link = [
-                        'type' => 'link',
-                        'title' => $courseName,
-                        'url' => $canvasApiUrl,
-                    ];
-
-                    $links[] = $link;
-                }
-            }
-            if (empty($links)) {
-                return response()->json(['error' => 'No Courses Found'], 400);
-            }
-            // Wrap the links in a container object if needed
-            $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $links];
-
-            return response()->json($response);
+        foreach ($enrollments as $enrollment) {
+            $links[] = \ProviderServices::encodeDeepLinkingJson($enrollment->resource_id, $enrollment->resource_name, $enrollment->resource_url);
         }
+        if (empty($links)) {
+            return response()->json(['error' => 'No Courses Found'], 400);
+        }
+        $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $links];
+        return response()->json($response);
     }
 }
