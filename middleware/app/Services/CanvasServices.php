@@ -6,7 +6,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use App\Models\ProviderPlatform;
 
-
 class CanvasServices
 {
     private int $provider_id;
@@ -25,7 +24,6 @@ class CanvasServices
     {
         return $this->base_url;
     }
-
 
     // constructor for when we already have the providerId
     public static function getByProviderId($providerId): CanvasServices | \InvalidArgumentException
@@ -58,6 +56,15 @@ class CanvasServices
         }
     }
 
+    public static function handleResponse($response): mixed
+    {
+        if ($response->getStatusCode() == 200) {
+            return json_decode($response->getBody()->__toString());
+        } else {
+            throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
+        }
+    }
+
     /**
      * Get a list of users from Canvas
      *
@@ -81,16 +88,10 @@ class CanvasServices
         $accountId = self::fmtAndValidateId($accountId);
         try {
             $response = $client->get($base_url . 'accounts/' . $accountId . 'users');
-
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
         } catch (RequestException $e) {
             throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /* Get details for a specific user in Canvas
@@ -113,16 +114,10 @@ class CanvasServices
         $userId = self::fmtAndValidateId($userId);
         try {
             $response = $client->get($base_url . 'users/' . $userId);
-
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
         } catch (RequestException $e) {
-
             throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -157,15 +152,10 @@ class CanvasServices
         ]);
         try {
             $response = $client->post($base_url . "accounts/self/users/", $userData);
-
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -187,14 +177,10 @@ class CanvasServices
             $account = self::fmtAndValidateId($account);
 
             $response = $client->get($base_url . 'users/' . $account . 'activity_stream');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -215,14 +201,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'users/' .  $account . 'activity_stream/summary');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -243,14 +225,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'users/' .  $account . 'todo');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -271,14 +249,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'users/' .  $account . 'todo_item_count');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -300,14 +274,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'users/' .  $userId . 'upcoming_events');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -328,14 +298,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'users/' .  $userId . 'missing_submissions');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * List Courses from Canvas
@@ -352,14 +318,10 @@ class CanvasServices
         ]);
         try {
             $response = $client->get($base_url . 'courses');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * List Courses from Canvas per User
@@ -381,14 +343,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'users/' . $userId . 'courses');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -415,14 +373,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/users/' . $userId . 'progress');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * List Course Assignments from Canvas
@@ -439,14 +393,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'users/' . $userId . 'enrollments');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * List Enrollments from Canvas by Course ID
@@ -462,14 +412,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/enrollments');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * List Course Enrollments By Section
@@ -484,14 +430,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'sections/' . $sectionId . '/enrollments');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * Enroll a user in a course
@@ -515,14 +457,10 @@ class CanvasServices
 
         try {
             $response = $client->post($base_url . 'courses/' . $courseId . '/enrollments' . $enrollment);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -544,14 +482,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->post($base_url . 'sections/' . $sectionId . '/enrollments' . $enrollment);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      *  Delete a course Enrollment
@@ -567,14 +501,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->delete($base_url . 'courses/' . $courseId . '/enrollments/' . $enrollmentId);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * Accept a course invitation
@@ -592,14 +522,10 @@ class CanvasServices
 
         try {
             $response = $client->post($base_url . 'courses/' . $courseId . '/enrollments/' . $userId . 'accept');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * Reject a course invitation
@@ -617,14 +543,10 @@ class CanvasServices
 
         try {
             $response = $client->post($base_url . 'courses/' . $courseId . '/enrollments/' . $userId . 'reject');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * Reactivate a course enrollment
@@ -642,14 +564,10 @@ class CanvasServices
 
         try {
             $response = $client->put($base_url . 'courses/' . $courseId . '/enrollments/' . $userId . 'reactivate');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * Add last attended date of course
@@ -667,14 +585,10 @@ class CanvasServices
 
         try {
             $response = $client->put($base_url . 'courses/' . $courseId . '/enrollments/' . $userId . 'last_attended');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -692,14 +606,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'progress/' . $userId);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * Cancel user progress
@@ -715,14 +625,10 @@ class CanvasServices
         $userId = self::fmtAndValidateId($userId);
         try {
             $response = $client->post($base_url . 'progress/' . $userId);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * List Assignments for User
@@ -740,14 +646,10 @@ class CanvasServices
 
         try {
             $response = $client->get($base_url . 'users/' . $userId . 'courses' . $courseId . '/assignments');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * List Assignments for Course
@@ -762,14 +664,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/assignments');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * List Assignments for Course
@@ -784,14 +682,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/assignment_groups/' . $assignmentGroupId . '/assignments');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /**
      * Delete Assignment
@@ -807,14 +701,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->delete($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /**
@@ -831,14 +721,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * Create an assignment for a given Course ID
@@ -858,14 +744,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->post($base_url . 'courses/' . $courseId . '/assignments' . $assignmentInfo);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /*
@@ -887,14 +769,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->put($base_url . 'courses/' . $courseId . '/assignments' . $assignmentId . '/' . $assignmentInfo);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * Edit an assignment for a given Course ID
@@ -916,14 +794,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->post($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions' . $assignment);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * List assignment submissions for a given Course ID
@@ -941,14 +815,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * List submissions for multiple assignments for a given Course ID
@@ -965,14 +835,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/students' .  '/submissions');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * Get single submission for user / assignment
@@ -990,14 +856,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * Get single submission by anonymous ID
@@ -1015,14 +877,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/anonymous_submissions' . $anonId);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * Upload a file for submission
@@ -1042,14 +900,10 @@ class CanvasServices
 
         try {
             $response = $client->post($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId . 'files');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * Grade or comment on a submission
@@ -1069,14 +923,10 @@ class CanvasServices
 
         try {
             $response = $client->put($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/submissions' . $userId);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * Grade or comment on a submission by anonymous ID
@@ -1094,14 +944,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->put($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/anonymous_submissions' . $anonId);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * List Gradeable Students
@@ -1118,14 +964,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/assignments' .  $assignmentId . '/gradeable_students');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * List Multiple Assignments Gradeable Students
@@ -1141,14 +983,10 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/assignments' . '/gradeable_students');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * Mark Submision as read
@@ -1168,14 +1006,10 @@ class CanvasServices
 
         try {
             $response = $client->put($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /*
@@ -1197,14 +1031,10 @@ class CanvasServices
 
         try {
             $response = $client->put($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read' . $item);
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * Mark Submision as unread
@@ -1223,14 +1053,10 @@ class CanvasServices
         $userId = self::fmtAndValidateId($userId);
         try {
             $response = $client->delete($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submissions/' . $userId . 'read');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 
     /*
@@ -1250,14 +1076,10 @@ class CanvasServices
 
         try {
             $response = $client->put($base_url . 'courses/' . $courseId . '/submissions/' . $userId . 'clear_unread');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
     /*
         * Get Submision summary
@@ -1274,13 +1096,9 @@ class CanvasServices
         $client = new Client(['Authorization' => 'Bearer' . $apiKey]);
         try {
             $response = $client->get($base_url . 'courses/' . $courseId . '/assignments/' . $assignmentId . '/submission_summary');
-            if ($response->getStatusCode() == 200) {
-                return json_decode($response->getBody()->__toString());
-            } else {
-                throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
-            }
-        } catch (RequestException $error) {
-            throw new \Exception('API request failed: ' . $error->getMessage());
+        } catch (RequestException $e) {
+            throw new \Exception('API request failed: ' . $e->getMessage());
         }
+        return self::handleResponse($response);
     }
 }
