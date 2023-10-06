@@ -13,7 +13,7 @@ class CreateProviderResourcesTable extends Migration
             $table->foreign('resource_id')->constrained();
             $table->integer('external_resource_id');
             $table->string('provider_resource_type');
-            $table->foreign('provider_platform_id')->constrained();
+            $table->foreign('provider_id')->constrained();
             $table->timestamps();
         });
     }

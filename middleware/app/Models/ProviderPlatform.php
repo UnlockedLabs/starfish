@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\PlatformConnectionType;
 
 class ProviderPlatform extends Model
 {
@@ -19,18 +20,12 @@ class ProviderPlatform extends Model
         'icon_url',
     ];
 
+    protected $casts = [
+        'type' => PlatformConnectionType::class,
+    ];
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-    }
-
-    public static function getAllProviderIds(): array
-    {
-        $providerIds = [];
-        $providers = self::all();
-        foreach ($providers as $provider) {
-            $providerIds[] = $provider->providerId;
-        }
-        return $providerIds;
     }
 }

@@ -13,22 +13,23 @@ use Illuminate\Http\Request;
 use App\Models\ProviderPlatform;
 use App\Models\ProviderUserResource;
 
-class ProviderUserController extends Controller
+class ProviderUserResourceController extends Controller
 {
+    // This is the cache refresh function
     // ****************************************************
     // route::get('/api/users/{user_id}/courses')
     //*****************************************************
-    // Eventually we will establish some kind of caching system, possibly with REDIS.
-    // storing the date of the last request, matching against the current date and
-    // making sure we only perform these calls once a day.
-    public function getProviderUserResources(Request $request): Illuminate\Http\JsonResponse
+    // @param Request $request
+    // @return Illuminate\Http\JsonResponse
+    // ****************************************************
+    public function show(Request $request): \Illuminate\Http\JsonResponse
     {
         $userId = $request->input('user_id');
         if (!$userId) {
             return response()->json(['error' => 'Missing user_id'], 400);
         }
         // Get all the available provider IDs
-        $providerIds = ProviderPlatform::getAllProviderIds();
+        $providerIds = ProviderPlatform::select('id')->get()->toArray();
         $links = [];
 
         if (!count($providerIds)) {
@@ -45,7 +46,7 @@ class ProviderUserController extends Controller
                 $links = [];
                 foreach ($enrollments as $course) {
                     // Create the LTI deep linking JSON structure
-                    $link = \ProviderServices::encodeDeepLinkingJson($course->id, $course->name, $canvasUtil->getBaseUrl());
+                    $link = \ProviderServices::formatLtiDeepLinkFromCanvasCourse($course, $canvasUtil->getBaseUrl());
                     // append each resource link
                     $links[] = $link;
                 }
@@ -57,17 +58,15 @@ class ProviderUserController extends Controller
                 return response()->json($response);
             }
         }
+        return response()->json(['error' => 'invalid request body'], 400);
     }
 
-    // This would be the cached version of the above function
+    // This would be the cached version of the above function to simply query the DB
     /* ****************************************************
     * route::get('/api/users/{user_id}/courses')
     * *****************************************************
-    * Eventually we will establish some kind of caching system, possibly with REDIS.
-    * storing the date of the last request, matching against the current date and
-    * making sure we only perform these calls once a day.
     */
-    public function getUserCoursesCached(Request $request): string | \InvalidArgumentException
+    public function showCached(Request $request): string | \InvalidArgumentException
     {
         $userId = $request->input('user_id');
         if (!$userId) {
@@ -76,7 +75,7 @@ class ProviderUserController extends Controller
         $enrollments = \App\Models\ProviderUserResource::where('user_id', $userId)->get();
         $links = [];
         foreach ($enrollments as $enrollment) {
-            $links[] = \ProviderServices::encodeDeepLinkingJson($enrollment->resource_id, $enrollment->resource_name, $enrollment->resource_url);
+            $links[] = \ProviderServices::
         }
         if (empty($links)) {
             return response()->json(['error' => 'No Courses Found'], 400);

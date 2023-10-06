@@ -20,9 +20,41 @@ class CanvasServices
         $this->access_key =  $apiKey;
         $this->base_url = $url;
     }
+    public function getAccessKey(): string
+    {
+        return $this->base_url;
+    }
     public function getBaseUrl(): string
     {
         return $this->base_url;
+    }
+
+    // Turns a canvas specific course into a LTI deep linking JSON structure
+    /***************************************************************
+     * @param string $courseId
+     * @param string $courseName
+     * @param string $url
+     * @return string
+    /* Example response:
+    {
+        "@context": "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",
+        "items": [
+            {   "type": "link",
+                "title": "Course Name",
+                "url": "https://canvas.instructure.com/api/v1/courses/123456" }]}
+     */
+    public static function encodeDeepLinkingJson(string $courseId, string $courseName, string $url): string
+    {
+        // Create the LTI deep linking JSON structure
+        $courseUrl = $url . "api/v1/courses/" . $courseId;
+
+        $link = [
+            'type' => 'link',
+            'title' => $courseName,
+            'url' => $courseUrl,
+        ];
+        $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $link];
+        return json_encode($response);
     }
 
     // constructor for when we already have the providerId
