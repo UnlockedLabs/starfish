@@ -15,7 +15,7 @@ use App\Models\ProviderUserResource;
 
 class ProviderUserResourceController extends Controller
 {
-    // This is the cache refresh function
+    // This is the cache refresh function (makes API calls directly)
     // ****************************************************
     // route::get('/api/users/{user_id}/courses')
     //*****************************************************
@@ -46,7 +46,7 @@ class ProviderUserResourceController extends Controller
                 $links = [];
                 foreach ($enrollments as $course) {
                     // Create the LTI deep linking JSON structure
-                    $link = \ProviderServices::formatLtiDeepLinkFromCanvasCourse($course, $canvasUtil->getBaseUrl());
+                    $link = \ProviderPlatformServices::formatLtiDeepLinkFromCanvasCourse($course, $canvasUtil->getBaseUrl());
                     // append each resource link
                     $links[] = $link;
                 }
@@ -61,26 +61,97 @@ class ProviderUserResourceController extends Controller
         return response()->json(['error' => 'invalid request body'], 400);
     }
 
-    // This would be the cached version of the above function to simply query the DB
-    /* ****************************************************
-    * route::get('/api/users/{user_id}/courses')
-    * *****************************************************
-    */
-    public function showCached(Request $request): string | \InvalidArgumentException
+    // Get all courses for all users (Probably not needed?)
+    // GET: /api/courses/
+    // ****************************************************
+    // @param Request $request
+    // @return Illuminate\Http\JsonResponse
+    // ****************************************************
+    public function index(): \Illuminate\Http\JsonResponse
     {
-        $userId = $request->input('user_id');
-        if (!$userId) {
-            return response()->json(['error' => 'Missing user_id'], 400);
+        $providerUserResources = ProviderUserResource::all();
+        return response()->json(json_encode($providerUserResources));
+    }
+    // Add a course to a user's account
+    // ****************************************************
+    // POST: /api/users/{user_id}/courses/{request_body}
+    // @param Request $request
+    // @return Illuminate\Http\JsonResponse
+    // ****************************************************
+    // Request $req example:
+    // { "provider_id": 1, "provider_resource_id": 1, "user_id": 1 }
+    public function store(Request $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $providerId = $request->input('provider_id');
+            $providerResourceId = $request->input('provider_resource_id');
+            $userId = $request->input('user_id');
+        } catch (\Exception) {
+            return response()->json(['error' => 'Invalid request body'], 401);
         }
-        $enrollments = \App\Models\ProviderUserResource::where('user_id', $userId)->get();
-        $links = [];
-        foreach ($enrollments as $enrollment) {
-            $links[] = \ProviderServices::
+        $providerUserResource = ProviderUserResource::create([
+            'provider_id' => $providerId,
+            'provider_resource_id' => $providerResourceId,
+            'user_id' => $userId,
+            'completed' => 'incomplete'
+        ]);
+        return response()->json($providerUserResource);
+    }
+    // Remove a course from a user's account
+    // ****************************************************
+    // DELETE: /api/users/{user_id}/courses/{request_body}
+    // @param Request $request
+    // @return Illuminate\Http\JsonResponse
+    // ****************************************************
+    // Request $req example:
+    // { "provider_id": 1, "provider_resource_id": 1, "user_id": 1 }
+    public function destroy(Request $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $providerId = $request->input('provider_id');
+            $providerResourceId = $request->input('provider_resource_id');
+            $userId = $request->input('user_id');
+        } catch (\Exception) {
+            return response()->json(['error' => 'Invalid request body'], 401);
         }
-        if (empty($links)) {
-            return response()->json(['error' => 'No Courses Found'], 400);
+        $providerUserResource = ProviderUserResource::where('provider_id', $providerId)
+            ->where('provider_resource_id', $providerResourceId)
+            ->where('user_id', $userId)
+            ->first();
+        if (!$providerUserResource) {
+            return response()->json(['error' => 'Invalid request body'], 401);
         }
-        $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $links];
-        return response()->json($response);
+        $providerUserResource->delete();
+        return response()->json(['success' => 'true']);
+    }
+    //
+    // Changes the status (completed) of a course for a user
+    // ****************************************************
+    // PUT: /api/users/{user_id}/courses/{request_body}
+    // @param Request $request
+    // @return Illuminate\Http\JsonResponse
+    // ****************************************************
+    // Request $req example:
+    // { "provider_id": 1, "provider_resource_id": 1, "user_id": 1 }
+    public function edit(Request $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $providerId = $request->input('provider_id');
+            $providerResourceId = $request->input('provider_resource_id');
+            $userId = $request->input('user_id');
+            $status = $request->input('status');
+        } catch (\Exception) {
+            return response()->json(['error' => 'Invalid request body'], 401);
+        }
+        $providerUserResource = ProviderUserResource::where('provider_id', $providerId)
+            ->where('provider_resource_id', $providerResourceId)
+            ->where('user_id', $userId)
+            ->first();
+        if (!$providerUserResource) {
+            return response()->json(['error' => 'Invalid request body'], 401);
+        }
+        $providerUserResource->completed = $status;
+        $providerUserResource->save();
+        return response()->json(['success' => 'true']);
     }
 }

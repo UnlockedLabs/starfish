@@ -33,4 +33,3 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
-Route::get('/users', [App\Http\Controllers\Controller::class, 'index']);
