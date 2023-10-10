@@ -10,10 +10,10 @@ class ProviderResource extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',          // Course ID
-        'type',        // ENUM ProviderResourceType
-        'provider_id', // ProviderPlatform ID
-        'consumer_id', // ConsumerPlatform ID
+        'resource_id',                   // Course ID
+        'type',                 // ENUM ProviderResourceType
+        'external_resource_id', // External Resource ID
+        'provider_id',          // ProviderPlatform ID
     ];
     protected $casts = [
         'type' => ProviderResourceType::class,

@@ -93,7 +93,7 @@ class ProviderUserResourceController extends Controller
             'provider_id' => $providerId,
             'provider_resource_id' => $providerResourceId,
             'user_id' => $userId,
-            'completed' => 'incomplete'
+            'status' => 'incomplete'
         ]);
         return response()->json($providerUserResource);
     }
@@ -125,7 +125,7 @@ class ProviderUserResourceController extends Controller
         return response()->json(['success' => 'true']);
     }
     //
-    // Changes the status (completed) of a course for a user
+    // Changes the status of a course for a user
     // ****************************************************
     // PUT: /api/users/{user_id}/courses/{request_body}
     // @param Request $request
@@ -150,7 +150,7 @@ class ProviderUserResourceController extends Controller
         if (!$providerUserResource) {
             return response()->json(['error' => 'Invalid request body'], 401);
         }
-        $providerUserResource->completed = $status;
+        $providerUserResource->status = $status;
         $providerUserResource->save();
         return response()->json(['success' => 'true']);
     }

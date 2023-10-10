@@ -12,11 +12,11 @@ class ProviderUserResource extends Model
         "user_id",              // ProviderUser ID
         "provider_resource_id", // Course ID
         "provider_id",          // Platform Provider ID
-        "completed",            // Enum (ProviderUserResourceStatus)
+        "status",            // Enum (ProviderUserResourceStatus)
     ];
 
     protected $casts = [
-        'completed' => ProviderUserResourceStatus::class,
+        'status' => ProviderUserResourceStatus::class,
     ];
 
     public function __construct(array $attributes = [])

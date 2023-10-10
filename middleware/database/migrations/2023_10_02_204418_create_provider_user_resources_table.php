@@ -9,10 +9,10 @@ return new class extends Migration
     /**
     For all intents and purposes. This is an "Enrollment"
 
-    UserId: Integer
-    ProviderResourceId: Integer
-    ProviderId: Integer
-    Completed: boolean (we can check the date on the course object)
+    user_id: Integer
+    provider_resource_id: Integer
+    provider_id: Integer
+    status: enum ProviderUserResourceStatus
      */
     public function up(): void
     {
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('provider_resource_id')->constrained();
             $table->foreignId('provider_id')->constrained();
-            $table->boolean('completed')->default(false);
+            $table->string('status')->default('not_completed');
             $table->timestamps();
         });
     }
