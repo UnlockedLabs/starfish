@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProviderPlatformResource extends JsonResource
+class ConsumerProviderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -24,6 +24,8 @@ class ProviderPlatformResource extends JsonResource
             'account_id' => $this->account_id,
             'access_key' => $this->access_key,
             'base_url' => $this->base_url,
+            'state' => $this->pivot->state,
+            'connection_id' => $this->pivot->id,
         ];
     }
 }

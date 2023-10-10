@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePlatformConnectionRequest;
 use App\Http\Requests\UpdatePlatformConnectionRequest;
+use App\Http\Resources\ConsumerProviderResource;
 use App\Http\Resources\PlatformConnectionResource;
+use App\Models\ConsumerPlatform;
 use App\Models\PlatformConnection;
 
 class PlatformConnectionController extends Controller
@@ -16,6 +18,14 @@ class PlatformConnectionController extends Controller
     public function index()
     {
         return PlatformConnectionResource::collection(PlatformConnection::all());
+    }
+    
+    public function showAllProvidersForConsumer(string $consumerPlatformId)
+    {
+        $consumerPlatform = ConsumerPlatform::find($consumerPlatformId);
+        
+        return ConsumerProviderResource::collection($consumerPlatform->providerPlatforms);
+
     }
 
     /**

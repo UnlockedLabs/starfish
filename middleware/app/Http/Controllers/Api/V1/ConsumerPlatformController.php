@@ -45,20 +45,22 @@ class ConsumerPlatformController extends Controller
         return ConsumerPlatformResource::make($consumerPlatform);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ConsumerPlatform $consumerPlatform)
-    {
-        //
-    }
+    // /**
+    //  * Show the form for editing the specified resource.
+    //  */
+    // public function edit(ConsumerPlatform $consumerPlatform)
+    // {
+    //     //
+    // }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateConsumerPlatformRequest $request, ConsumerPlatform $consumerPlatform)
     {
-        //
+        $consumerPlatform->update($request->validated());
+
+        return ConsumerPlatformResource::make($consumerPlatform);
     }
 
     /**

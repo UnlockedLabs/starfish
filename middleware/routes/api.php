@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\ChangePlatformConnectionStateController;
 use App\Http\Controllers\Api\V1\ConsumerPlatformController;
 use App\Http\Controllers\Api\V1\PlatformConnectionController;
 use App\Http\Controllers\Api\V1\ProviderPlatformController;
@@ -22,6 +23,8 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('/provider_platforms', ProviderPlatformController::class);
     Route::apiResource('/consumer_platforms', ConsumerPlatformController::class);
     Route::apiResource('/platform_connections', PlatformConnectionController::class);
+    Route::get('/{consumer_platform_id}/platform_connections', [PlatformConnectionController::class, 'showAllProvidersForConsumer']);
+    Route::patch('/platform_connections/{platform_connection}/change_connection_state', ChangePlatformConnectionStateController::class);
 });
 
 

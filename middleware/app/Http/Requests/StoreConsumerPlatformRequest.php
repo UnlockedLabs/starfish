@@ -23,9 +23,9 @@ class StoreConsumerPlatformRequest extends FormRequest
     {
         return [
             'type' => 'required|string|max:255',
-            'name' => 'required|string|max:255',
-            'api_key' => 'required|unique:consumer_platforms,api_key',
-            'base_url' => 'required|url:http,https',
+            // 'name' => 'required|string|max:255',
+            // 'api_key' => 'required|unique:consumer_platforms,api_key',
+            // 'base_url' => 'required|url:http,https',
         ];
     }
 }

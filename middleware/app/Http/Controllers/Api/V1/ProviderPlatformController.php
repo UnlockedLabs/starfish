@@ -16,13 +16,11 @@ class ProviderPlatformController extends Controller
     public function index()
     {
         return ProviderPlatformResource::collection(ProviderPlatform::all());
-
-        // return ProviderPlatform::all();
     }
 
     public function hello(string $message)
     {
-        return $message;
+        return $message . "world";
     }
 
     /**
