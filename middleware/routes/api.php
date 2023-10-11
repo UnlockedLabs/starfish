@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
-    Route::get('/{consumer_platform_id}/provider_platforms', [ProviderPlatformController::class, 'hello']);
     Route::apiResource('/provider_platforms', ProviderPlatformController::class);
     Route::apiResource('/consumer_platforms', ConsumerPlatformController::class);
     Route::apiResource('/platform_connections', PlatformConnectionController::class);

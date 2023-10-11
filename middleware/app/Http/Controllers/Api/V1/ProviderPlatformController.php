@@ -18,11 +18,6 @@ class ProviderPlatformController extends Controller
         return ProviderPlatformResource::collection(ProviderPlatform::all());
     }
 
-    public function hello(string $message)
-    {
-        return $message . "world";
-    }
-
     /**
      * Show the form for creating a new resource.
      */
