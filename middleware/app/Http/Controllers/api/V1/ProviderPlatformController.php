@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api\V1;
 
 use App\Models\ProviderPlatform;
 use Illuminate\Http\Request;
 use ProviderPlatformServices;
+use App\Http\Controllers\Controller;
 
 class ProviderPlatformController extends Controller
 {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use App\Models\ProviderPlatform;
+use App\Models\ProviderUserResource;
 
 class CanvasServices
 {
@@ -55,6 +56,50 @@ class CanvasServices
         ];
         $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $link];
         return json_encode($response);
+    }
+
+    /**
+     * Retrive all user enrollments for a given provider (cached)
+     * @param string $userId
+     * @return Illuminate\Http\JsonResponse
+     * @throws \InvalidArgumentException
+     */
+    public function getCoursesByProvider(string $userId): Illuminate\Http\JsonResponse | \InvalidArgumentException
+    {
+        $time = time();
+        $enrollments = ProviderUserResource::where('user_id', $userId)->get();
+        $links = [];
+        foreach ($enrollments as $course) {
+            // Create the LTI deep linking JSON structure
+            $link = \ProviderPlatformServices::formatLtiDeepLinkFromCanvasCourse($course, $this->getBaseUrl());
+            // append each resource link
+            $links[] = $link;
+        }
+        if (empty($links)) {
+            return response()->json(['error' => 'No Provider Resources Found'], 400);
+        }
+        // Wrap the links in a container object if needed
+        $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $links];
+        return response()->json($response);
+    }
+
+    public function updateProviderUserResources(string $userId): void
+    {
+        $courses = $this->listCoursesForUser($userId);
+        $courses = $courses->courses;
+        foreach ($courses as $course) {
+            $providerUserResource = ProviderUserResource::where('user_id', $userId)
+                ->where('provider_resource_id', $course->id)
+                ->first();
+            if (!$providerUserResource) {
+                $providerUserResource = ProviderUserResource::create([
+                    'provider_id' => $this->provider_id,
+                    'provider_resource_id' => $course->id,
+                    'user_id' => $userId,
+                    'status' => 'incomplete'
+                ]);
+            }
+        }
     }
 
     // constructor for when we already have the providerId

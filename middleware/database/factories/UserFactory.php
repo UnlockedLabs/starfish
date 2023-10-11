@@ -16,7 +16,7 @@ class UserFactory extends Factory
     /**
      * Define the model's default state.
      *
-     * @return array<string, mixed>
+     * @return array<string, Illuminate\Http\JsonResponse>
      */
     public function definition(): array
     {

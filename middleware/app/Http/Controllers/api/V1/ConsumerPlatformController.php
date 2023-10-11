@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+declare(strict_types=1);
+
+namespace App\Http\Controllers\api\V1;
 
 use App\Models\ConsumerPlatform;
 use ConsumerPlatformServices;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ConsumerPlatformController extends Controller
 {
