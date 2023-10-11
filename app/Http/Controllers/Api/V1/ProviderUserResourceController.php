@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
 /*
  * ProviderResource - Course
 
 * UserResource - Enrollment
 */
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api\V1;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ProviderPlatform;
 use App\Models\ProviderUserResource;
+use App\Http\Controllers\Controller;
 
 class ProviderUserResourceController extends Controller
 {
@@ -33,7 +34,7 @@ class ProviderUserResourceController extends Controller
         $links = [];
 
         if (!count($providerIds)) {
-            // Here is where we would call a function to register the student in all downstream providers
+            // Here is where we would
             return response()->json(['error' => 'There are no registerd providers for this student ID'], 400);
         } else {
             foreach ($providerIds as $id) {

@@ -1,5 +1,6 @@
 <?php
 
+<<<<<<<< HEAD:app/Http/Controllers/Api/V1/PlatformConnectionController.php
 <<<<<<< HEAD:app/Http/Controllers/Api/V1/PlatformConnectionController.php
 namespace App\Http\Controllers\Api\V1;
 
@@ -12,6 +13,10 @@ use App\Models\PlatformConnection;
 use App\Http\Resources\PlatformConnectionResource;
 
 =======
+========
+namespace App\Http\Controllers\api\V1;
+
+>>>>>>>> b6e704f (move to namespace):middleware/app/Http/Controllers/api/V1/PlatformConnectionController.php
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\PlatformConnection;
