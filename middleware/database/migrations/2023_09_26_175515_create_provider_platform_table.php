@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('provider_platforms', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string('type');
             $table->string('name');
             $table->string('description');
@@ -21,6 +20,7 @@ return new class extends Migration
             $table->string('account_id');
             $table->string('access_key');
             $table->string('base_url');
+            $table->timestamps();
         });
     }
 
@@ -32,3 +32,4 @@ return new class extends Migration
         Schema::dropIfExists('provider_platforms');
     }
 };
+

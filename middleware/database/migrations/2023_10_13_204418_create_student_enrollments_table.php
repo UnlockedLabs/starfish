@@ -16,10 +16,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('provider_user_resources', function (Blueprint $table) {
+        Schema::create('student_enrollments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('provider_resource_id')->constrained();
+            $table->foreignId('provider_user_id')->constrained();
+            $table->foreignId('provider_content_id')->constrained();
             $table->foreignId('provider_id')->constrained();
             $table->string('status')->default('not_completed');
             $table->timestamps();
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('provider_user_resources');
+        Schema::dropIfExists('student_enrollments');
     }
 };

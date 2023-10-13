@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId('consumer_platform_id')->constrained();
             $table->foreignId('provider_platform_id')->constrained();
-            $table->string('state');
+            $table->string('state')->default('disabled');
         });
     }
 
