@@ -47,7 +47,7 @@ class CanvasServices
     */
     function getClient(): GuzzleHttp\Client
     {
-        return new Client(["headers" => ['Authorization' => 'Bearer' . $this->access_key]]);
+        return new Client(["Headers" => ['Authorization' => 'Bearer' . $this->access_key]]);
     }
 
     // Returns an instance of CanvasServices to make dynamic API calls.
@@ -101,7 +101,7 @@ class CanvasServices
      */
     public function listUsers(string $accountId = 'self'): mixed
     {
-        $base_url = $this->api_url . 'accounts/' . self::fmtUrl($accountId) . 'users';
+        $base_url = $this->api_url . ACCOUNTS . self::fmtUrl($accountId) . USERS;
         try {
             $response = $this->client->get($base_url);
         } catch (RequestException $e) {
@@ -491,7 +491,7 @@ class CanvasServices
      **/
     public function addLastAttendedDate(string $courseId, string $userId = 'self'): mixed
     {
-        $base_url = $this->api_url . COURSES . $courseId . ENROLLMENTS . $userId . 'last_attended';
+        $base_url = $this->api_url . COURSES . self::fmtUrl($courseId) . ENROLLMENTS . self::fmtUrl($userId) . 'last_attended';
         try {
             $response = $this->client->put($base_url);
         } catch (RequestException $e) {
@@ -541,7 +541,7 @@ class CanvasServices
      **/
     public function listAssignmentsForUser(string $courseId, string $userId = 'self'): mixed
     {
-        $base_url = $this->api_url . USERS . $userId . COURSES . $courseId . ASSIGNMENTS;
+        $base_url = $this->api_url . USERS . self::fmtUrl($userId) . COURSES . self::fmtUrl($courseId) . ASSIGNMENTS;
         try {
             $response = $this->client->get($base_url);
         } catch (RequestException $e) {
@@ -573,7 +573,7 @@ class CanvasServices
      **/
     public function listAssignmentGroupsByCourse(string $assignmentGroupId, string $courseId): mixed
     {
-        $base_url = $this->api_url . COURSES . self::fmtUrl($courseId) . 'assignment_groups/' . $assignmentGroupId . ASSIGNMENTS;
+        $base_url = $this->api_url . COURSES . self::fmtUrl($courseId) . 'assignment_groups/' . self::fmtUrl($assignmentGroupId) . ASSIGNMENTS;
         try {
             $response = $this->client->get($base_url);
         } catch (RequestException $e) {
@@ -937,7 +937,7 @@ class CanvasServices
         **/
     public function getSubmissionSummary(string $courseId, string $assignmentId): mixed
     {
-        $base_url = $this->api_url . COURSES . self::fmtUrl($courseId) . ASSIGNMENTS . $assignmentId . '/submission_summary';
+        $base_url = $this->api_url . COURSES . self::fmtUrl($courseId) . ASSIGNMENTS . self::fmtUrl($assignmentId) . 'submission_summary';
         try {
             $response = $this->client->get($base_url);
         } catch (RequestException $e) {
