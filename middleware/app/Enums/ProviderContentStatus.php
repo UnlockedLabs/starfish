@@ -1,6 +1,6 @@
 <?php
 
-enum ProviderUserResourceStatus: string
+enum ProviderContentStatus: string
 {
 
     case COMPLETED   = 'completed';

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ProviderResourceType: string
+enum ProviderContentType: string
 {
     case COURSE = 'course';
     case EXAM = 'exam';
