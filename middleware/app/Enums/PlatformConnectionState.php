@@ -3,7 +3,7 @@
 namespace App\Enums;
 
 
-enum PlatformConnectionType: string
+enum PlatformConnectionState: string
 {
     case ENABLED =  'enabled';
     case DISABLED = 'disabled';

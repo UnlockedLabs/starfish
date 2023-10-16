@@ -8,7 +8,28 @@ use App\Models\ProviderPlatform;
 use Psr\Http\Message\ResponseInterface;
 
 
+/**
+ * Class CanvasServices
+ * constants for canvas API routes
+ */
+const CANVAS_API = 'api/v1/';
+const API_ERROR = 'API Request Error: ';
+const USERS = 'users/';
+const ACCOUNTS = 'accounts/';
+const COURSES = 'courses/';
+const ENROLLMENTS = 'enrollments/';
+const ASSIGNMENTS = 'assignments/';
+const SUBMISSIONS = 'submissions/';
+const STUDENTS = 'students/';
+const ACTIVITY_STREAM = 'activity_stream/';
+const SELF = 'self/';
+const PROGRESS = 'progress/';
+const SECTIONS  = 'sections/';
+const GRADEABLE_STUDENTS = 'gradeable_students/';
+const READ = 'read/';
+const ANONYMOUS_SUBMISSIONS = 'anonymous_submissions/';
 class CanvasServices
+
 {
     private int $provider_id;
     private int $account_id;
@@ -946,24 +967,3 @@ class CanvasServices
         return self::handleResponse($response);
     }
 }
-
-/**
- * Class CanvasServices
- * constants for canvas API routes
- */
-const CANVAS_API = 'api/v1/';
-const API_ERROR = 'API Request Error: ';
-const USERS = 'users/';
-const ACCOUNTS = 'accounts/';
-const COURSES = 'courses/';
-const ENROLLMENTS = 'enrollments/';
-const ASSIGNMENTS = 'assignments/';
-const SUBMISSIONS = 'submissions/';
-const STUDENTS = 'students/';
-const ACTIVITY_STREAM = 'activity_stream/';
-const SELF = 'self/';
-const PROGRESS = 'progress/';
-const SECTIONS  = 'sections/';
-const GRADEABLE_STUDENTS = 'gradeable_students/';
-const READ = 'read/';
-const ANONYMOUS_SUBMISSIONS = 'anonymous_submissions/';
