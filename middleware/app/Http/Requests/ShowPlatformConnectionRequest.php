@@ -24,7 +24,7 @@ class ShowPlatformConnectionRequest extends FormRequest
         return [
             'consumer_platform_id' => 'required_if:provider_platform_id|string|max:255',
             'provider_platform_id' => 'required_if:consumer_platform_id|string|max:255',
-            'status' => 'nullable|string|in:active,disabled,archived',
+            'status'               => 'nullable|string|in:active,disabled,archived',
         ];
     }
 }

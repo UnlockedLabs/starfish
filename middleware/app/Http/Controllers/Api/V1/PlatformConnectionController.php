@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\api\V1\Controllers\Controller;
+
 use App\Http\Requests\PlatformConnectionRequest;
 use App\Http\Requests\ShowPlatformConnectionRequest;
-use App\Http\Requests\ShowStudentEnrollmentRequest;
 use App\Models\PlatformConnection;
 use App\Http\Resources\PlatformConnectionResource;
+
+const INVALID_REQUEST_BODY = response()->json(['error', 'Invalid request body'], 401);
 
 class PlatformConnectionController extends Controller
 {
@@ -40,7 +41,7 @@ class PlatformConnectionController extends Controller
             $platform_connection = PlatformConnection::create($req->validated());
             return new PlatformConnectionResource($platform_connection);
         } catch (\Exception) {
-            return response()->json(['error' => 'Invalid request body'], 401);
+            return INVALID_REQUEST_BODY;
         }
     }
 
@@ -56,7 +57,7 @@ class PlatformConnectionController extends Controller
             $validated = $req->validated();
             return new PlatformConnectionResource(PlatformConnection::where($validated)->first());
         } catch (\Exception) {
-            return response()->json(['error' => 'Invalid request body'], 401);
+            return INVALID_REQUEST_BODY;
         }
     }
 
@@ -83,13 +84,13 @@ class PlatformConnectionController extends Controller
     // Request $req example:
     // { "consumer_id": 1, "provider_id": 1 }
     // *************************************************************
-    public function delete(PlatformConnectionRequest $req): Illuminate\Http\JsonResponse
+    public function delete(PlatformConnectionRequest $req): \Illuminate\Http\JsonResponse
     {
         try {
             PlatformConnectionRequest::where($req->validated())->delete();
             return response()->json(['success' => 'Platform connection deleted successfully'], 200);
         } catch (\Exception) {
-            return response()->json(['error' => 'Invalid request body'], 401);
+            return INVALID_REQUEST_BODY;
         }
     }
 }

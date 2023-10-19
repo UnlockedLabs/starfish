@@ -7,10 +7,10 @@ namespace App\Http\Controllers\api\V1;
 use Illuminate\Http\Request;
 use App\Models\ProviderPlatform;
 use App\Models\StudentEnrollment;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\StudentEnrollmentRequest;
 use App\Http\Resources\StudentEnrollmentResource;
-
+use App\Enums\StudentEnrollmentStatus;
 
 class ProviderUserResourceController extends Controller
 {
@@ -18,6 +18,7 @@ class ProviderUserResourceController extends Controller
     {
         $validated = $request->validated();
         $enrollments = StudentEnrollment::where('user_id', $validated['provider_user_id'])->and('status', StudentEnrollmentStatus::IN_PROGRESS)->get();
+        return new StudentEnrollmentResource($enrollments);
     }
     // This is the cache refresh function (makes API calls directly)
     // ****************************************************

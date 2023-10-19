@@ -1,6 +1,8 @@
 <?php
 
-enum StudentEnrollmentType: string
+namespace App\Enums;
+
+enum StudentEnrollmentStatus: string
 {
 
     case COMPLETED   = 'completed';
