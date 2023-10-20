@@ -19,9 +19,9 @@ class PlatformConnectionController extends Controller
     // Request $req example:
     // { "consumer_id": 1 }
     // *************************************************************
-    public function index(): PlatformConnectionResource
+    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return PlatformConnectionResource::collection(PlatformConnection::all());
+        return  PlatformConnectionResource::collection(PlatformConnection::all());
     }
 
     /* Create a new platform connection */

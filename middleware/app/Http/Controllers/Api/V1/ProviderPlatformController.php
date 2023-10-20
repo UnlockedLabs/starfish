@@ -4,8 +4,7 @@ namespace App\Http\Controllers\api\V1;
 
 use App\Models\ProviderPlatform;
 use Illuminate\Http\Request;
-use ProviderPlatformServices;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\StoreProviderPlatformRequest;
 use App\Http\Resources\ProviderPlatformResource;
 
@@ -50,7 +49,7 @@ class ProviderPlatformController extends Controller
         }
         $provider = ProviderPlatform::create($validated);
         // Create a new platform connection.
-        return response()->json($provider);
+        return new ProviderPlatformResource($provider);
     }
 
     // Update a provider platform
@@ -67,8 +66,8 @@ class ProviderPlatformController extends Controller
         if (!$providerPlatform) {
             return response()->json(['error' => 'Invalid provider ID'], 401);
         } else {
-            $providerPlatform->update($validated > all());
-            return ProviderPlatformResource($providerPlatform);
+            $providerPlatform->update($validated->all());
+            return new ProviderPlatformResource($providerPlatform);
         }
     }
 

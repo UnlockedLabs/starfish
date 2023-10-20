@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreConsumerPlatformRequest;
 use App\Http\Requests\UpdateConsumerPlatformRequest;
 use App\Http\Resources\ConsumerPlatformResource;
-use App\Http\Controllers\Controller as Controller;
+use App\Http\Controllers\Api\V1\Controller;
 
 class ConsumerPlatformController extends Controller
 {
@@ -68,14 +68,6 @@ class ConsumerPlatformController extends Controller
         }
         $consumerPlatform->update(['type' => $validated['type'], 'api_key' => $validated['api_key'], 'name' => $validated['name'], 'base_url' => $validated['base_url']]);
         return response()->json(['success' => $consumerPlatform], 200);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ConsumerPlatform $consumerPlatform)
-    {
-        //
     }
 
     /**
