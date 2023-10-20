@@ -12,7 +12,7 @@ class ProviderContent extends Model
     use HasFactory;
 
     protected $fillable = [
-        'content_id',           // Course ID
+        'provider_content_id',           // Course ID
         'type',                  // Enum ProvdiderContentType
         'external_resource_id',  // External Resource ID
         'provider_platform_id',   // ProviderPlatform ID
@@ -29,11 +29,11 @@ class ProviderContent extends Model
 
     public function studentEnrollment(): HasMany
     {
-        return $this->hasMany(StudentEnrollment::class, 'id', 'provider_content_id');
+        return $this->hasMany(StudentEnrollment::class, 'provider_content_id');
     }
 
     public function providerPlatform(): BelongsTo
     {
-        return $this->belongsTo(ProviderPlatform::class, 'id', 'provider_platform_id');
+        return $this->belongsTo(ProviderPlatform::class, 'provider_platform_id');
     }
 }
