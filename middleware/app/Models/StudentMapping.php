@@ -21,7 +21,7 @@ class StudentMapping extends Model
 
     public function student(): HasOne
     {
-        return $this->hasOne(Student::class, 'id', 'student_id');
+        return $this->hasOne(Student::class, 'student_id');
     }
 
     public function studentEnrollment(): HasMany
@@ -31,11 +31,11 @@ class StudentMapping extends Model
 
     public function providerPlatform(): HasOne
     {
-        return $this->hasOne(ProviderPlatform::class, 'id', 'provider_platform_id');
+        return $this->hasOne(ProviderPlatform::class, 'provider_platform_id');
     }
 
     public function consumerPlatform(): HasOne
     {
-        return $this->hasOne(ConsumerPlatform::class, 'id', 'consumer_platform_id');
+        return $this->hasOne(ConsumerPlatform::class,  'consumer_platform_id');
     }
 }

@@ -17,7 +17,7 @@ class Student extends Model
 
     public function studentMapping(): HasOne
     {
-        return $this->hasOne(StudentMapping::class, 'student_id', 'id');
+        return $this->hasOne(StudentMapping::class, 'student_id');
     }
     public function studentEnrollments(): HasManyThrough
     {
