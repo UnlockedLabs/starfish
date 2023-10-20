@@ -30,16 +30,16 @@ class ProviderPlatform extends Model
 
     public function platformConnections(): HasMany
     {
-        return $this->hasMany(PlatformConnection::class, "provider_platform_id", "id");
+        return $this->hasMany(PlatformConnection::class, "provider_platform_id");
     }
 
     public function providerContent(): HasMany
     {
-        return $this->hasMany(ProviderContent::class, "provider_platform_id", "id");
+        return $this->hasMany(ProviderContent::class, "provider_platform_id");
     }
 
     public function studentMapping(): HasMany
     {
-        return $this->hasMany(StudentMapping::class, "provider_platform_id", "id");
+        return $this->hasMany(StudentMapping::class, "provider_platform_id");
     }
 }

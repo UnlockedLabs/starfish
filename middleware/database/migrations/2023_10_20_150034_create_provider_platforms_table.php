@@ -3,16 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-/*
-
-Type: string ('Unlockedv1', etc.)
-
-Name: string
-
-ApiKey: string
-
-BaseUrl: string
-*/
 
 return new class extends Migration
 {
@@ -21,20 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('consumer_platforms', function (Blueprint $table) {
+        Schema::create('provider_platforms', function (Blueprint $table) {
             $table->id();
             $table->string('type');
             $table->string('name');
-            $table->string('api_key');
+            $table->string('account_id');
+            $table->string('description');
+            $table->string('access_key');
             $table->string('base_url');
+            $table->string('icon_url');
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('consumer_platforms');
+        Schema::dropIfExists('provider_platforms');
     }
 };

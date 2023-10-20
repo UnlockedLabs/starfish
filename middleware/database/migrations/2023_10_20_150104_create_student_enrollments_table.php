@@ -7,20 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-    For all intents and purposes. This is an "Enrollment"
-
-    user_id: Integer
-    provider_resource_id: Integer
-    provider_id: Integer
-    status: enum ProviderUserResourceStatus
+     * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('student_enrollments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('provider_user_id')->constrained();
+            $table->string('provider_user_id');
             $table->foreignId('provider_content_id')->constrained();
-            $table->foreignId('provider_id')->constrained();
+            $table->foreignId('provider_platform_id')->constrained();
             $table->string('status')->default('not_completed');
             $table->timestamps();
         });

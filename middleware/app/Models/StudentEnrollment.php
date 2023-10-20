@@ -34,11 +34,11 @@ class StudentEnrollment extends Model
 
     public function providerContent(): BelongsTo
     {
-        return $this->belongsTo(ProviderContent::class, 'provider_content_id', 'id');
+        return $this->belongsTo(ProviderContent::class, 'provider_content_id');
     }
 
     public function providerPlatform(): BelongsTo
     {
-        return $this->belongsTo(ProviderPlatform::class, 'provider_platform_id', 'id');
+        return $this->belongsTo(ProviderPlatform::class, 'provider_platform_id');
     }
 }
