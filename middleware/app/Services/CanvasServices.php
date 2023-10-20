@@ -63,12 +63,34 @@ class CanvasServices
         return $this->base_url;
     }
 
+
     /* Helper function to return an HTTP client set with access key
     * @return GuzzleHttp\Client
     */
     function getClient(): GuzzleHttp\Client
     {
         return new Client(["Headers" => ['Authorization' => 'Bearer' . $this->access_key]]);
+    }
+
+    /*
+     * Formats a given Course object and returns a Canvas LTI Deep Link
+    * @param object $course
+    * @param string $baseUrl
+    * @return array
+     */
+    public function formatLtiLinking($course): array
+    {
+        $link = [
+            'type' => 'ltiResourceLink',
+            'title' => $course->name,
+            'url' => $this->base_url . '/courses/' . $course->id,
+            'icon' => [
+                'url' => 'https://www.instructure.com/favicon.ico',
+                'width' => 50,
+                'height' => 50
+            ]
+        ];
+        return $link;
     }
 
     // Returns an instance of CanvasServices to make dynamic API calls.

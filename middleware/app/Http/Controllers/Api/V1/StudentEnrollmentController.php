@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\api\V1;
 
-use Illuminate\Http\Request;
 use App\Models\ProviderPlatform;
 use App\Models\StudentEnrollment;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\StudentEnrollmentRequest;
 use App\Http\Resources\StudentEnrollmentResource;
 use App\Enums\StudentEnrollmentStatus;
+use App\Models\ProviderContent;
+use App\Http\Requests\StoreProviderContentRequest;
+use App\Http\Requests\ProviderContentRequest;
 
-class ProviderUserResourceController extends Controller
+class StudentEnrollmentController extends Controller
 {
     public function show(StudentEnrollmentRequest $request): StudentEnrollmentResource
     {
@@ -27,6 +29,7 @@ class ProviderUserResourceController extends Controller
     // @param Request $request
     // @return Illuminate\Http\JsonResponse
     // ****************************************************
+
     public function refreshEnrollmentCahce(StudentEnrollmentRequest $request): \Illuminate\Http\JsonResponse
     {
         $userId = $request->input('user_id');
@@ -38,20 +41,19 @@ class ProviderUserResourceController extends Controller
         $links = [];
 
         if (!count($providerIds)) {
-            // Here is where we would
             return response()->json(['error' => 'There are no registerd providers for this student ID'], 400);
         } else {
             foreach ($providerIds as $id) {
                 // Each iteration will instantiate a new CanvasUtil object
                 // and query the Canvas API for the user's courses
-                $canvasUtil = \CanvasServices::getByProviderId($id);
+                $canvasUtil = \CanvasServices::byProviderId($id);
                 $enrollments = $canvasUtil->listCoursesForUser($userId);
                 // Obviously we would just query the DB and return the enrollments for the user,
                 // but for the prototype we demonstrate how the information is fetched.
                 $links = [];
                 foreach ($enrollments as $course) {
                     // Create the LTI deep linking JSON structure
-                    $link = \ProviderPlatformServices::formatLtiDeepLinkFromCanvasCourse($course, $canvasUtil->getBaseUrl());
+                    $link = $canvasUtil->formatLtiLinking($course);
                     // append each resource link
                     $links[] = $link;
                 }
@@ -74,7 +76,7 @@ class ProviderUserResourceController extends Controller
     // ****************************************************
     public function index(): \Illuminate\Http\JsonResponse
     {
-        $providerUserResources = ProviderUserResource::all();
+        $providerUserResources = ProviderContent::all();
         return response()->json(json_encode($providerUserResources));
     }
     // Add a course to a user's account
@@ -85,23 +87,17 @@ class ProviderUserResourceController extends Controller
     // ****************************************************
     // Request $req example:
     // { "provider_id": 1, "provider_resource_id": 1, "user_id": 1 }
-    public function store(ProviderUserResourceRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreProviderContentRequest $request): \Illuminate\Http\JsonResponse
     {
         try {
-            $providerId = $request->input('provider_id');
-            $providerResourceId = $request->input('provider_resource_id');
-            $userId = $request->input('user_id');
+            $validated = $request->validated();
         } catch (\Exception) {
             return response()->json(['error' => 'Invalid request body'], 401);
         }
-        $providerUserResource = ProviderUserResource::create([
-            'provider_id' => $providerId,
-            'provider_resource_id' => $providerResourceId,
-            'user_id' => $userId,
-            'status' => 'incomplete'
-        ]);
-        return response()->json($providerUserResource);
+        $providerContent = ProviderContent::create([$validated]);
+        return response()->json($providerContent);
     }
+
     // Remove a course from a user's account
     // ****************************************************
     // DELETE: /api/users/{user_id}/courses/{request_body}
@@ -110,7 +106,7 @@ class ProviderUserResourceController extends Controller
     // ****************************************************
     // Request $req example:
     // { "provider_id": 1, "provider_resource_id": 1, "user_id": 1 }
-    public function destroy(Request $request): \Illuminate\Http\JsonResponse
+    public function destroy(ProviderContentRequest $request): \Illuminate\Http\JsonResponse
     {
         try {
             $providerId = $request->input('provider_id');
@@ -119,7 +115,7 @@ class ProviderUserResourceController extends Controller
         } catch (\Exception) {
             return response()->json(['error' => 'Invalid request body'], 401);
         }
-        $providerUserResource = ProviderUserResource::where('provider_id', $providerId)
+        $providerUserResource = ProviderContent::where('provider_id', $providerId)
             ->where('provider_resource_id', $providerResourceId)
             ->where('user_id', $userId)
             ->first();
@@ -129,7 +125,7 @@ class ProviderUserResourceController extends Controller
         $providerUserResource->delete();
         return response()->json(['success' => 'true']);
     }
-    //
+
     // Changes the status of a course for a user
     // ****************************************************
     // PUT: /api/users/{user_id}/courses/{request_body}
@@ -138,25 +134,23 @@ class ProviderUserResourceController extends Controller
     // ****************************************************
     // Request $req example:
     // { "provider_id": 1, "provider_resource_id": 1, "user_id": 1 }
-    public function edit(Request $request): \Illuminate\Http\JsonResponse
+    public function edit(StoreProviderContentRequest $request): \Illuminate\Http\JsonResponse
     {
         try {
-            $providerId = $request->input('provider_id');
-            $providerResourceId = $request->input('provider_resource_id');
-            $userId = $request->input('user_id');
-            $status = $request->input('status');
+            $validated = $request->validated();
         } catch (\Exception) {
             return response()->json(['error' => 'Invalid request body'], 401);
         }
-        $providerUserResource = ProviderUserResource::where('provider_id', $providerId)
-            ->where('provider_resource_id', $providerResourceId)
-            ->where('user_id', $userId)
+        $content = ProviderContent::where('provider_id', $validated['provider_id'])
+            ->where('provider_resource_id', $validated['provider_resource_id'])
+            ->where('user_id', $validated['user_id'])
             ->first();
-        if (!$providerUserResource) {
+
+        if (!$content) {
             return response()->json(['error' => 'Invalid request body'], 401);
         }
-        $providerUserResource->status = $status;
-        $providerUserResource->save();
+        $content->status = $validated['status'];
+        $content->save();
         return response()->json(['success' => 'true']);
     }
 }
