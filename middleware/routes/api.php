@@ -25,9 +25,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('consumer_platforms', ConsumerPlatformController::class);
     Route::apiResource('platform_connections', PlatformConnectionController::class);
 
-    Route::get('courses', [StudentEnrollmentController::class, 'index']);
-    Route::get('students/{student_id}/courses', [StudentEnrollmentController::class, 'show']);
-    Route::post('students/{student_id}/courses', [StudentEnrollmentController::class, 'store']);
-    Route::patch('students/{student_id}/courses', [StudentEnrollmentController::class, 'update']);
-    Route::delete('students/{student_id}/courses', [StudentEnrollmentController::class, 'destroy']);
+    Route::get('students.courses', [StudentEnrollmentController::class, 'show']);
+    Route::patch('students.courses', [StudentEnrollmentController::class, 'update']);
 });
