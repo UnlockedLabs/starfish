@@ -24,9 +24,10 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('provider_platforms', ProviderPlatformController::class);
     Route::apiResource('consumer_platforms', ConsumerPlatformController::class);
     Route::apiResource('platform_connections', PlatformConnectionController::class);
+
     Route::get('courses', [StudentEnrollmentController::class, 'index']);
-    Route::get('users/{user_id}/courses', [StudentEnrollmentController::class, 'show']);
-    Route::post('users/{user_id}/courses', [StudentEnrollmentController::class, 'store']);
-    Route::patch('users/{user_id}/courses', [StudentEnrollmentController::class, 'update']);
-    Route::delete('users/{user_id}/courses', [StudentEnrollmentController::class, 'destroy']);
+    Route::get('students/{student_id}/courses', [StudentEnrollmentController::class, 'show']);
+    Route::post('students/{student_id}/courses', [StudentEnrollmentController::class, 'store']);
+    Route::patch('students/{student_id}/courses', [StudentEnrollmentController::class, 'update']);
+    Route::delete('students/{student_id}/courses', [StudentEnrollmentController::class, 'destroy']);
 });

@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use App\Models\ProviderPlatform;
 use Psr\Http\Message\ResponseInterface;
-
+use App\Http\Requests\StudentEnrollmentRequest;
 
 /**
  * Class CanvasServices
@@ -132,6 +132,50 @@ class CanvasServices
         }
     }
 
+    // This is the cache refresh function (makes API calls directly)
+    // ****************************************************
+    // route::get('/api/v1/users/{user_id}/courses')
+    //*****************************************************
+    // @param Request $request
+    // @return Illuminate\Http\JsonResponse
+    // ****************************************************
+    public function refreshEnrollmentCache(StudentEnrollmentRequest $request): \Illuminate\Http\JsonResponse
+    {
+        $userId = $request->input('user_id');
+        if (!$userId) {
+            return response()->json(['error' => 'Missing user_id'], 400);
+        }
+        // Get all the available provider IDs
+        $providerIds = ProviderPlatform::select('id')->get()->toArray();
+        $links = [];
+
+        if (!count($providerIds)) {
+            return response()->json(['error' => 'There are no registerd providers for this student ID'], 400);
+        } else {
+            foreach ($providerIds as $id) {
+                // Each iteration will instantiate a new CanvasUtil object
+                // and query the Canvas API for the user's courses
+                $canvasUtil = \CanvasServices::byProviderId($id);
+                $enrollments = $canvasUtil->listCoursesForUser($userId);
+                // Obviously we would just query the DB and return the enrollments for the user,
+                // but for the prototype we demonstrate how the information is fetched.
+                $links = [];
+                foreach ($enrollments as $course) {
+                    // Create the LTI deep linking JSON structure
+                    $link = $canvasUtil->formatLtiLinking($course);
+                    // append each resource link
+                    $links[] = $link;
+                }
+                if (empty($links)) {
+                    return response()->json(['error' => 'No Provider Resources Found'], 400);
+                }
+                // Wrap the links in a container object if needed
+                $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $links];
+                return response()->json($response);
+            }
+        }
+        return response()->json(['error' => 'invalid request body'], 400);
+    }
     /**
      * Get a list of users from Canvas
      *
