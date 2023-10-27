@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\api\V1;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Models\StudentEnrollment;
 use App\Http\Controllers\Api\V1\Controller;
@@ -40,7 +40,7 @@ class StudentEnrollmentController extends Controller
         try {
             $validated = $request->validated();
         } catch (\Exception) {
-            return response()->json(['error' => 'Invalid request body'], 401);
+            return response()->json(INVALID_REQUEST_BODY, 401);
         }
         $content = ProviderContent::where('provider_id', $validated['provider_id'])
             ->where('provider_resource_id', $validated['provider_resource_id'])
@@ -48,10 +48,10 @@ class StudentEnrollmentController extends Controller
             ->first();
 
         if (!$content) {
-            return response()->json(['error' => 'Invalid request body'], 401);
+            return response()->json(INVALID_REQUEST_BODY, 401);
         }
         $content->status = $validated['status'];
         $content->save();
-        return response()->json(['success' => 'true']);
+        return response()->json(['success' => 'true'], 200);
     }
 }

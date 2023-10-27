@@ -24,8 +24,6 @@ class ProviderPlatformResource extends JsonResource
             'account_id' => $this->account_id,
             'access_key' => $this->access_key,
             'base_url' => $this->base_url,
-            'state' => $this->pivot->state,
-            'connection_id' => $this->pivot->id,
         ];
     }
 }

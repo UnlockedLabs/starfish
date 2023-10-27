@@ -1,16 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\api\V1;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Models\ProviderPlatform;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\StoreProviderPlatformRequest;
 use App\Http\Resources\ProviderPlatformResource;
-
-use const App\Http\Controllers\Api\V1\INVALID_REQUEST_BODY as V1INVALID_REQUEST_BODY;
-
-const INVALID_REQUEST_BODY = response()->json(['error', 'Invalid request body'], 401);
 
 class ProviderPlatformController extends Controller
 {
@@ -36,7 +32,7 @@ class ProviderPlatformController extends Controller
         if ($providerPlatform) {
             return new ProviderPlatformResource($providerPlatform);
         } else {
-            return V1INVALID_REQUEST_BODY;
+            return response()->json(INVALID_REQUEST_BODY, 401);
         }
     }
     // Create a new provider platform (does not register connection)
@@ -49,7 +45,7 @@ class ProviderPlatformController extends Controller
         try {
             $validated = $req->validated();
         } catch (\Exception) {
-            return INVALID_REQUEST_BODY;
+            return response()->json(INVALID_REQUEST_BODY, 401);
         }
         $provider = ProviderPlatform::create($validated);
         // Create a new platform connection.

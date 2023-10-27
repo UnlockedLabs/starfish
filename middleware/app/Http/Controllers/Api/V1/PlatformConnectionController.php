@@ -8,7 +8,6 @@ use App\Http\Requests\ShowPlatformConnectionRequest;
 use App\Models\PlatformConnection;
 use App\Http\Resources\PlatformConnectionResource;
 
-const INVALID_REQUEST_BODY = response()->json(['error', 'Invalid request body'], 401);
 
 class PlatformConnectionController extends Controller
 {

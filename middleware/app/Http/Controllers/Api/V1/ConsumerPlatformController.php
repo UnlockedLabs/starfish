@@ -12,8 +12,8 @@ use App\Http\Requests\UpdateConsumerPlatformRequest;
 use App\Http\Resources\ConsumerPlatformResource;
 use App\Http\Controllers\Api\V1\Controller;
 
-const INVALID_REQUEST_BODY = response()->json(['error' => 'Invalid request body'], 401);
-const PLATFORM_NOT_FOUND = response()->json(['error' => 'consumer platform not found'], 404);
+const INVALID_REQUEST_BODY = ['error' => 'Invalid request body'];
+const PLATFORM_NOT_FOUND = ['error' => 'consumer platform not found'];
 
 class ConsumerPlatformController extends Controller
 {
@@ -39,7 +39,7 @@ class ConsumerPlatformController extends Controller
             $validated = $request->validated();
             $cp = ConsumerPlatform::create($validated);
         } catch (\Exception) {
-            return INVALID_REQUEST_BODY;
+            return response()->json(INVALID_REQUEST_BODY, 401);
         }
         return new ConsumerPlatformResource($cp);
     }
@@ -56,7 +56,7 @@ class ConsumerPlatformController extends Controller
             $consumerPlatform = ConsumerPlatform::where('id', $id)->first();
             return new ConsumerPlatformResource($consumerPlatform);
         } catch (\Exception) {
-            return PLATFORM_NOT_FOUND;
+            return response()->json(PLATFORM_NOT_FOUND, 404);
         }
     }
 
@@ -72,7 +72,7 @@ class ConsumerPlatformController extends Controller
         $validated = $request->validated();
         $consumerPlatform = ConsumerPlatform::where('id', $validated['id'])->first();
         if ($consumerPlatform === null) {
-            return PLATFORM_NOT_FOUND;
+            return response()->json(PLATFORM_NOT_FOUND, 404);
         }
         $consumerPlatform->update($validated);
         return response()->json(['success' => $consumerPlatform], 200);
@@ -89,7 +89,7 @@ class ConsumerPlatformController extends Controller
     {
         $consumerPlatform = ConsumerPlatform::where('id', $request->input('id'))->first();
         if ($consumerPlatform === null) {
-            return PLATFORM_NOT_FOUND;
+            return response()->json(PLATFORM_NOT_FOUND, 404);
         } else {
             $consumerPlatform->delete();
         }
