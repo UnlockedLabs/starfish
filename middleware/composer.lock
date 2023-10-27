@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b497a7031364bf07dc2755eb3cb0872",
+    "content-hash": "0273f3c1f0709eddc52459fb63546225",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -552,52 +552,6 @@
                 }
             ],
             "time": "2023-08-10T19:36:49+00:00"
-        },
-        {
-            "name": "educoder/pest",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/educoder/pest.git",
-                "reference": "7c4d24d6aafc4ebac711c73cc8797d9b1779525b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/educoder/pest/zipball/7c4d24d6aafc4ebac711c73cc8797d9b1779525b",
-                "reference": "7c4d24d6aafc4ebac711c73cc8797d9b1779525b",
-                "shasum": ""
-            },
-            "require": {
-                "lib-curl": "*",
-                "php": ">=5.2"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    ""
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Matt Zukowski",
-                    "email": "matt@zukowski.ca"
-                },
-                {
-                    "name": "Donald Sipe",
-                    "email": "donald.sipe@gmail.com"
-                }
-            ],
-            "description": "A proper REST client for PHP.",
-            "homepage": "https://github.com/educoder/pest",
-            "support": {
-                "issues": "https://github.com/educoder/pest/issues",
-                "source": "https://github.com/educoder/pest/tree/1.0.0"
-            },
-            "time": "2013-11-17T12:58:01+00:00"
         },
         {
             "name": "egulias/email-validator",
