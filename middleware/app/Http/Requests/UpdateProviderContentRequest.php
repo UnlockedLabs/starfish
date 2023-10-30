@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 
 
-class CreateProviderContentRequest extends FormRequest
+class UpdateProviderContentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +25,9 @@ class CreateProviderContentRequest extends FormRequest
     {
         return [
             'provider_platform_id' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
-            'external_resource_id' => 'required|string|max:255',
-            'status' => 'required|string|max:255',
+            'type' => 'nullable|string|max:255',
+            'external_resource_id' => 'nullable|string|max:255',
+            'status' => 'nullable|string|max:255',
         ];
     }
 }

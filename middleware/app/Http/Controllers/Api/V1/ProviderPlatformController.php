@@ -6,6 +6,7 @@ use App\Models\ProviderPlatform;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\StoreProviderPlatformRequest;
+use App\Http\Requests\ShowProviderPlatformRequest;
 use App\Http\Resources\ProviderPlatformResource;
 
 class ProviderPlatformController extends Controller
@@ -26,7 +27,7 @@ class ProviderPlatformController extends Controller
     // @param Request $request
     // @return JsonResponse
     // ****************************************************
-    public function show(Request $request, $id): ProviderPlatformResource|\Illuminate\Http\JsonResponse
+    public function show(ShowProviderPlatformRequest $request, $id): ProviderPlatformResource|\Illuminate\Http\JsonResponse
     {
         $providerPlatform = ProviderPlatform::where('id', $id)->first();
         if ($providerPlatform) {

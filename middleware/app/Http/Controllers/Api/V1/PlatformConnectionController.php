@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\PlatformConnectionRequest;
 use App\Http\Requests\ShowPlatformConnectionRequest;
+use App\Http\Requests\StorePlatformConnectionRequest;
+use App\Http\Requests\UpdatePlatformConnectionRequest;
 use App\Models\PlatformConnection;
 use App\Http\Resources\PlatformConnectionResource;
 
@@ -29,7 +31,7 @@ class PlatformConnectionController extends Controller
     // PlatformConnectionRequest $req example:
     // { "consumer_id": 1, "provider_id": 1, "state": "enabled" }
     // *************************************************************
-    public function store(PlatformConnectionRequest $req): PlatformConnectionResource
+    public function store(StorePlatformConnectionRequest $req): PlatformConnectionResource
     {
         $validated = $req->validated();
         $exists = PlatformConnection::where($validated)->first();
@@ -66,7 +68,7 @@ class PlatformConnectionController extends Controller
     // Request $req example:
     // { "consumer_id": 1, "provider_id": 1, "state": "enabled" }
     // *************************************************************
-    public function update(PlatformConnectionRequest $req): PlatformConnectionResource
+    public function update(UpdatePlatformConnectionRequest $req): PlatformConnectionResource
     {
         $validated = $req->validated();
         $PlatformConnection = PlatformConnection::where($validated)->first();
@@ -83,7 +85,7 @@ class PlatformConnectionController extends Controller
     // Request $req example:
     // { "consumer_id": 1, "provider_id": 1 }
     // *************************************************************
-    public function delete(PlatformConnectionRequest $req): \Illuminate\Http\JsonResponse
+    public function delete(ShowPlatformConnectionRequest $req): \Illuminate\Http\JsonResponse
     {
         try {
             PlatformConnectionRequest::where($req->validated())->delete();

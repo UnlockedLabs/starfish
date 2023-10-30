@@ -11,6 +11,7 @@ use App\Http\Requests\StoreConsumerPlatformRequest;
 use App\Http\Requests\UpdateConsumerPlatformRequest;
 use App\Http\Resources\ConsumerPlatformResource;
 use App\Http\Controllers\Api\V1\Controller;
+use App\Http\Requests\ShowConsumerPlatformRequest;
 
 const INVALID_REQUEST_BODY = ['error' => 'Invalid request body'];
 const PLATFORM_NOT_FOUND = ['error' => 'consumer platform not found'];
@@ -50,7 +51,7 @@ class ConsumerPlatformController extends Controller
      * @param string $id
      * @return ConsunmerPlatformResource
      */
-    public function show($id): ConsumerPlatformResource
+    public function show(ShowConsumerPlatformRequest $id): ConsumerPlatformResource
     {
         try {
             $consumerPlatform = ConsumerPlatform::where('id', $id)->first();
@@ -85,7 +86,7 @@ class ConsumerPlatformController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function destroy(Request $request): \Illuminate\Http\JsonResponse
+    public function destroy(ShowConsumerPlatformRequest $request): \Illuminate\Http\JsonResponse
     {
         $consumerPlatform = ConsumerPlatform::where('id', $request->input('id'))->first();
         if ($consumerPlatform === null) {
