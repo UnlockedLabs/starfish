@@ -22,8 +22,8 @@ class ShowPlatformConnectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'consumer_platform_id' => 'required_if:provider_platform_id|string|max:255',
-            'provider_platform_id' => 'required_if:consumer_platform_id|string|max:255',
+            'consumer_platform_id' => 'required_unless:provider_platform_id|string|max:255',
+            'provider_platform_id' => 'required_unless:consumer_platform_id|string|max:255',
             'status'               => 'nullable|string|in:active,disabled,archived',
         ];
     }

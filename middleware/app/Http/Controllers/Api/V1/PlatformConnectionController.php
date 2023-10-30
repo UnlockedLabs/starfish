@@ -25,7 +25,7 @@ class PlatformConnectionController extends Controller
 
     /* Create a new platform connection */
     //*************************************************************
-    // POST: /api/platform_connection/
+    // POST: /api/v1/platform_connection/
     // PlatformConnectionRequest $req example:
     // { "consumer_id": 1, "provider_id": 1, "state": "enabled" }
     // *************************************************************
@@ -40,13 +40,13 @@ class PlatformConnectionController extends Controller
             $platform_connection = PlatformConnection::create($req->validated());
             return new PlatformConnectionResource($platform_connection);
         } catch (\Exception) {
-            return INVALID_REQUEST_BODY;
+            return response()->json(INVALID_REQUEST_BODY, 401);
         }
     }
 
     // Get a specific platform connection by consumer or provider id
     // *************************************************************
-    // GET: /api/platform_connection/{id}
+    // GET: /api/v1/platform_connection/{id}
     // Request $req example:
     //  "consumer_id": 1 || "provider_id": 1
     // *************************************************************
@@ -56,13 +56,13 @@ class PlatformConnectionController extends Controller
             $validated = $req->validated();
             return new PlatformConnectionResource(PlatformConnection::where($validated)->first());
         } catch (\Exception) {
-            return INVALID_REQUEST_BODY;
+            return response()->json(INVALID_REQUEST_BODY, 401);
         }
     }
 
     // Update a platform connection (The only possible update here would be the state)
     // *************************************************************
-    // PUT: /api/platform_connection/{request_body}
+    // PUT: /api/v1/platform_connection/{request_body}
     // Request $req example:
     // { "consumer_id": 1, "provider_id": 1, "state": "enabled" }
     // *************************************************************
@@ -79,7 +79,7 @@ class PlatformConnectionController extends Controller
 
     // Delete a platform connection
     // *************************************************************
-    // DELETE: /api/platform_connection/{request_body}
+    // DELETE: /api/v1/platform_connection/{request_body}
     // Request $req example:
     // { "consumer_id": 1, "provider_id": 1 }
     // *************************************************************
@@ -89,7 +89,7 @@ class PlatformConnectionController extends Controller
             PlatformConnectionRequest::where($req->validated())->delete();
             return response()->json(['success' => 'Platform connection deleted successfully'], 200);
         } catch (\Exception) {
-            return INVALID_REQUEST_BODY;
+            return response()->json(INVALID_REQUEST_BODY, 401);
         }
     }
 }
