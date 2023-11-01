@@ -10,13 +10,12 @@ use App\Http\Requests\UpdatePlatformConnectionRequest;
 use App\Models\PlatformConnection;
 use App\Http\Resources\PlatformConnectionResource;
 
-
 class PlatformConnectionController extends Controller
 {
 
     /* Get all platform connections */
     //*************************************************************
-    // GET: /api/platform_connection/
+    // GET: /api/v1/platform_connection/
     // Request $req example:
     // { "consumer_id": 1 }
     // *************************************************************
@@ -45,7 +44,6 @@ class PlatformConnectionController extends Controller
             return response()->json(INVALID_REQUEST_BODY, 401);
         }
     }
-
     // Get a specific platform connection by consumer or provider id
     // *************************************************************
     // GET: /api/v1/platform_connection/{id}
@@ -73,10 +71,10 @@ class PlatformConnectionController extends Controller
         $validated = $req->validated();
         $PlatformConnection = PlatformConnection::where($validated)->first();
         $PlatformConnection->state = $validated['state'];
-        return new PlatformConnectionResource($PlatformConnection->save());
         if (!$PlatformConnection) {
             return response()->json(['error' => 'No matching platform connection found'], 401);
         }
+        return new PlatformConnectionResource($PlatformConnection->save());
     }
 
     // Delete a platform connection

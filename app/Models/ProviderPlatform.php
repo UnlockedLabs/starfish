@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\ProviderPlatformType;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +12,7 @@ class ProviderPlatform extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'type',
         'name',
         'description',

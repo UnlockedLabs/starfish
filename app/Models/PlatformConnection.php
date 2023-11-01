@@ -19,13 +19,9 @@ class PlatformConnection extends Model
     use HasFactory;
 
     protected $fillable = [
+        'consumer_platform_id',
+        'provider_platform_id',
         'state',
-        'consumer_platform',
-        'provider_platform',
-    ];
-
-    protected $casts = [
-        'state' => PlatformConnectionState::class
     ];
 
     public function consumerPlatform(): BelongsTo
