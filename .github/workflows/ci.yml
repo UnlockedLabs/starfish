@@ -10,7 +10,7 @@ jobs:
   phpunit:
     runs-on: ubuntu-latest
     container:
-      image: kirschbaumdevelopment/laravel-test-runner:7.3
+      image: kirschbaumdevelopment/laravel-test-runner:8.2
 
     steps:
       - uses: actions/checkout@v1
@@ -26,15 +26,15 @@ jobs:
       - name: Install composer dependencies
         run: |
           cd middleware
-          composer install --no-scripts
-
+          composer update
+          composer install
       - name: Prepare Laravel Application
         run: |
           cd middleware
-          php artisan key:generate
+          cp .env.testing .env
           php artisan migrate:fresh --env=testing
 
       - name: Run Testsuite
         run: |
           cd middlware
-          vendor/bin/phpunit tests/
+          vendor/bin/pest/
