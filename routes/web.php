@@ -33,9 +33,3 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
-<<<<<<< HEAD:routes/web.php
-
-Route::any('/lti', [App\Http\Controllers\LtiController::class, 'ltiMessage']);
-Route::get('/lti/jwks', [App\Http\Controllers\LtiController::class, 'getJWKS']);
-=======
->>>>>>> 1430f68 (remove misnamed file, update api routes):middleware/routes/web.php
