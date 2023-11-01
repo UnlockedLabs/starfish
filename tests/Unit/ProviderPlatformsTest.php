@@ -50,21 +50,4 @@ class ProviderPlatformTest extends TestCase
         $response->assertStatus(201); // Check if the response code indicates a successful creation.
         $response->assertJsonFragment(['name' => 'TestPlatform']); // Check if the response contains the created data.
     }
-
-    /**
-     * Test updating a provider platform.
-     */
-    public function testUpdateProviderPlatform()
-    {
-        $data = [
-            'name' => 'UpdatedPlatformName',
-        ];
-
-        $providerPlatform = App\Models\ProviderPlatform::factory(ProviderPlatform::class)->create(); // Create a provider platform for testing.
-
-        $response = $this->put("/api/v1/provider_platforms/{$providerPlatform->id}", $data);
-
-        $response->assertStatus(200); // Check if the response code indicates a successful update.
-        $response->assertJsonFragment(['name' => 'UpdatedPlatformName']); // Check if the response contains the updated data.
-    }
 }

@@ -28,6 +28,8 @@ const SECTIONS  = 'sections/';
 const GRADEABLE_STUDENTS = 'gradeable_students/';
 const READ = 'read/';
 const ANONYMOUS_SUBMISSIONS = 'anonymous_submissions/';
+use App\Models\ProviderUserResource;
+
 class CanvasServices
 
 {
@@ -35,8 +37,10 @@ class CanvasServices
     private int $account_id;
     private string $access_key;
     private string $base_url;
+
     private string $api_url;
     public Client $client;
+
 
     public function __construct(int $providerId, int $accountId, string $apiKey, string $url)
     {
@@ -44,6 +48,7 @@ class CanvasServices
         $this->account_id = $accountId;
         $this->access_key =  $apiKey;
         $this->base_url = $url;
+
         $this->api_url = $url . CANVAS_API;
         $this->client = $this->getClient();
     }
@@ -57,7 +62,6 @@ class CanvasServices
     {
         return $this->base_url;
     }
-
     public function getBaseUrl(): string
     {
         return $this->base_url;
@@ -110,11 +114,97 @@ class CanvasServices
 
     /**
      * validate and format the account ID parameter for API URLs
+    // Turns a canvas specific course into a LTI deep linking JSON structure
+    /***************************************************************
+     * @param string $courseId
+     * @param string $courseName
+     * @param string $url
+     * @return string
+    /* Example response:
+    {
+        "@context": "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",
+        "items": [
+            {   "type": "link",
+                "title": "Course Name",
+                "url": "https://canvas.instructure.com/api/v1/courses/123456" }]}
+     */
+    public static function encodeDeepLinkingJson(string $courseId, string $courseName, string $url): string
+    {
+        // Create the LTI deep linking JSON structure
+        $courseUrl = $url . "api/v1/courses/" . $courseId;
+
+        $link = [
+            'type' => 'link',
+            'title' => $courseName,
+            'url' => $courseUrl,
+        ];
+        $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $link];
+        return json_encode($response);
+    }
+
+    /**
+     * Retrive all user enrollments for a given provider (cached)
+     * @param string $userId
+     * @return Illuminate\Http\JsonResponse
+     * @throws \InvalidArgumentException
+     */
+    public function getCoursesByProvider(string $userId): Illuminate\Http\JsonResponse | \InvalidArgumentException
+    {
+        $time = time();
+        $enrollments = ProviderUserResource::where('user_id', $userId)->get();
+        $links = [];
+        foreach ($enrollments as $course) {
+            // Create the LTI deep linking JSON structure
+            $link = \ProviderPlatformServices::formatLtiDeepLinkFromCanvasCourse($course, $this->getBaseUrl());
+            // append each resource link
+            $links[] = $link;
+        }
+        if (empty($links)) {
+            return response()->json(['error' => 'No Provider Resources Found'], 400);
+        }
+        // Wrap the links in a container object if needed
+        $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $links];
+        return response()->json($response);
+    }
+
+    public function updateProviderUserResources(string $userId): void
+    {
+        $courses = $this->listCoursesForUser($userId);
+        $courses = $courses->courses;
+        foreach ($courses as $course) {
+            $providerUserResource = ProviderUserResource::where('user_id', $userId)
+                ->where('provider_resource_id', $course->id)
+                ->first();
+            if (!$providerUserResource) {
+                $providerUserResource = ProviderUserResource::create([
+                    'provider_id' => $this->provider_id,
+                    'provider_resource_id' => $course->id,
+                    'user_id' => $userId,
+                    'status' => 'incomplete'
+                ]);
+            }
+        }
+    }
+
+    // constructor for when we already have the providerId
+    public static function getByProviderId($providerId): CanvasServices | \InvalidArgumentException
+    {
+        $provider = ProviderPlatform::findByProviderId($providerId);
+
+        if (!$provider) {
+            throw new \InvalidArgumentException('Invalid provider ID');
+        }
+        return new self($provider->type, $provider->account_id, $provider->account_name, $provider->access_key, $provider->base_url, $provider->icon_url);
+    }
+
+    /**
+     * Validate and format the account ID parameter for API URLs
      *
      * @param string $id
      * @return string Formatted account or user ID
      * @throws \InvalidArgumentException If the account ID is invalid
      */
+
     public static function fmtUrl(string $id): string
     {
         if (substr($id, -1) !== '/') {
@@ -123,7 +213,20 @@ class CanvasServices
         return $id;
     }
 
-    public static function handleResponse(ResponseInterface $response): mixed
+    public function fmtAndValidateId(string $id): string
+    {
+        if ($id === 'self' || is_numeric($id)) {
+            // Append a trailing slash if needed
+            if (substr($id, -1) !== '/') {
+                $id .= '/';
+            }
+            return $id;
+        } else {
+            throw new \InvalidArgumentException('Invalid account ID');
+        }
+    }
+
+    public static function handleResponse($response): mixed
     {
         if ($response->getStatusCode() == 200) {
             return json_decode($response->getBody()->__toString());
@@ -210,6 +313,7 @@ class CanvasServices
             $response = $this->client->get($base_url);
         } catch (RequestException $e) {
             throw new \Exception(API_ERROR . $e->getMessage());
+
         }
         return self::handleResponse($response);
     }
@@ -237,6 +341,7 @@ class CanvasServices
             ],
             'force_validations' => true,
         ];
+
         $base_url = $this->api_url . ACCOUNTS . SELF . USERS;
         try {
             $response = $this->client->post($base_url, $userData);
@@ -255,6 +360,7 @@ class CanvasServices
      */
     public function listActivityStream(string $account = 'self'): mixed
     {
+
         $base_url = $this->api_url . USERS . self::fmtUrl($account) . ACTIVITY_STREAM;
         try {
             $response = $this->client->get($base_url);
@@ -272,6 +378,7 @@ class CanvasServices
      */
     public function getActivityStreamSummary(string $account = 'self'): mixed
     {
+
         $base_url = $this->api_url . USERS .  self::fmtUrl($account) . ACTIVITY_STREAM . 'summary';
         try {
             $response = $this->client->get($base_url);
@@ -438,7 +545,6 @@ class CanvasServices
         }
         return self::handleResponse($response);
     }
-
     /**
      * List Course Enrollments By Section
      * @param string $sectionId
@@ -761,7 +867,6 @@ class CanvasServices
         **/
     public function submitAssignment(string $courseId, string $assignmentId, array $assignment): mixed
     {
-
         $base_url = $this->api_url . COURSES . self::fmtUrl($courseId) . ASSIGNMENTS . self::fmtUrl($assignmentId) . SUBMISSIONS . $assignment;
         try {
             $response = $this->client->post($base_url);

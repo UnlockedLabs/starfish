@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\ProviderPlatformType;
+
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,10 +22,12 @@ class ProviderPlatform extends Model
         'icon_url',
     ];
 
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
     }
+
 
     public function platformConnections(): HasMany
     {

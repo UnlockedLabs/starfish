@@ -23,11 +23,6 @@ class PlatformConnection extends Model
         'consumer_platform',
         'provider_platform',
     ];
-
-    protected $casts = [
-        'state' => PlatformConnectionState::class
-    ];
-
     public function consumerPlatform(): BelongsTo
     {
         return $this->belongsTo(ConsumerPlatform::class);
