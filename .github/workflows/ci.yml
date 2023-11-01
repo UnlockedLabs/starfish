@@ -19,22 +19,17 @@ jobs:
 
       - name: Install front-end dependencies
         run: |
-          cd middleware
           npm install
           npm run build
 
       - name: Install composer dependencies
         run: |
-          cd middleware
           composer update
           composer install
       - name: Prepare Laravel Application
         run: |
-          cd middleware
           cp .env.testing .env
           php artisan migrate:fresh --env=testing
 
       - name: Run Testsuite
-        run: |
-          cd middlware
-          vendor/bin/pest/
+        run: php artisan test
