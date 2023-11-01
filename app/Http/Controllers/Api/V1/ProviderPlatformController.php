@@ -1,6 +1,5 @@
 <?php
 
-<<<<<<< HEAD:app/Http/Controllers/Api/V1/ProviderPlatformController.php
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\ProviderPlatform;
@@ -17,20 +16,20 @@ class ProviderPlatformController extends Controller
     // ****************************************************
     // GET: /api/provider_platforms/
     // ****************************************************
-    public function index()
+    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         return ProviderPlatformResource::collection(ProviderPlatform::all(['*']));
     }
     //
     // List information on a specific provider platform
     // ****************************************************
-    // GET: /api/provider_platforms/{request_body}
+    // GET: /api/v1/provider_platforms/{request_body}
     // @param Request $request
     // @return JsonResponse
     // ****************************************************
-    public function show(ShowProviderPlatformRequest $request, $id): ProviderPlatformResource|\Illuminate\Http\JsonResponse
+    public function show(ShowProviderPlatformRequest $request): ProviderPlatformResource|\Illuminate\Http\JsonResponse
     {
-        $providerPlatform = ProviderPlatform::where('id', $id)->first();
+        $providerPlatform = ProviderPlatform::where('id', $request->id)->first();
         if ($providerPlatform) {
             return new ProviderPlatformResource($providerPlatform);
         } else {
@@ -61,7 +60,7 @@ class ProviderPlatformController extends Controller
     // @return JsonResponse
     // Request $request
     // ****************************************************
-    public function update(StoreProviderPlatformRequest $request)
+    public function update(StoreProviderPlatformRequest $request): ProviderPlatformResource|\Illuminate\Http\JsonResponse
     {
         $validated = $request->validated();
         $providerPlatform = ProviderPlatform::where($validated)->first();
@@ -79,9 +78,9 @@ class ProviderPlatformController extends Controller
     // Request $req example:
     // { "provider_id": 1 }
     // ****************************************************
-    public function destroy(Request $request, $providerId): \Illuminate\Http\JsonResponse
+    public function destroy(Request $request): \Illuminate\Http\JsonResponse
     {
-        $providerPlatform = ProviderPlatform::where('id', $providerId)->first();
+        $providerPlatform = ProviderPlatform::where('id', $request->input('id'))->first();
         if (!$providerPlatform) {
             return response()->json(['error' => 'Invalid provider ID'], 401);
         } else {
@@ -89,13 +88,4 @@ class ProviderPlatformController extends Controller
             return response()->json(json_encode($providerPlatform));
         }
     }
-=======
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-
-class ProviderPlatformController extends Controller
-{
-    //
->>>>>>> 8b2e792 (fix: upgraded to meet schema):middleware/app/Http/Controllers/ProviderPlatformController.php
 }

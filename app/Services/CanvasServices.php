@@ -5,7 +5,6 @@ declare(strict_types=1);
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use App\Models\ProviderPlatform;
-<<<<<<< HEAD:app/Services/CanvasServices.php
 use Psr\Http\Message\ResponseInterface;
 use App\Http\Requests\StudentEnrollmentRequest;
 
@@ -29,8 +28,7 @@ const SECTIONS  = 'sections/';
 const GRADEABLE_STUDENTS = 'gradeable_students/';
 const READ = 'read/';
 const ANONYMOUS_SUBMISSIONS = 'anonymous_submissions/';
-=======
->>>>>>> b6e704f (move to namespace):middleware/app/Services/CanvasServices.php
+
 use App\Models\ProviderUserResource;
 
 class CanvasServices
@@ -73,8 +71,6 @@ class CanvasServices
     {
         return $this->base_url;
     }
-
-<<<<<<< HEAD:app/Services/CanvasServices.php
 
     /* Helper function to return an HTTP client set with access key
     * @return GuzzleHttp\Client
@@ -122,8 +118,6 @@ class CanvasServices
 
     /**
      * validate and format the account ID parameter for API URLs
-=======
->>>>>>> 0feb532 (fix items in review with nokie. PR closes UN-102):middleware/app/Services/CanvasServices.php
     // Turns a canvas specific course into a LTI deep linking JSON structure
     /***************************************************************
      * @param string $courseId
@@ -152,10 +146,6 @@ class CanvasServices
         return json_encode($response);
     }
 
-<<<<<<< HEAD:app/Services/CanvasServices.php
-<<<<<<< HEAD:app/Services/CanvasServices.php
-=======
->>>>>>> b6e704f (move to namespace):middleware/app/Services/CanvasServices.php
     /**
      * Retrive all user enrollments for a given provider (cached)
      * @param string $userId
@@ -200,11 +190,6 @@ class CanvasServices
         }
     }
 
-<<<<<<< HEAD:app/Services/CanvasServices.php
-=======
->>>>>>> 0feb532 (fix items in review with nokie. PR closes UN-102):middleware/app/Services/CanvasServices.php
-=======
->>>>>>> b6e704f (move to namespace):middleware/app/Services/CanvasServices.php
     // constructor for when we already have the providerId
     public static function getByProviderId($providerId): CanvasServices | \InvalidArgumentException
     {
@@ -332,7 +317,6 @@ class CanvasServices
             $response = $this->client->get($base_url);
         } catch (RequestException $e) {
             throw new \Exception(API_ERROR . $e->getMessage());
-
         }
         return self::handleResponse($response);
     }
