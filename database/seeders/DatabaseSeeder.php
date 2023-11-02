@@ -14,7 +14,11 @@ class DatabaseSeeder extends Seeder
     {
 
         $this->call(ProviderPlatformSeeder::class);
-
+        $this->call(ProviderContentSeeder::class);
+        $this->call(StudentSeeder::class);
+        $this->call(StudentEnrollmentSeeder::class);
+        $this->call(ConsumerPlatformSeeder::class);
+        $this->call(PlatformConnectionSeeder::class);
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',

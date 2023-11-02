@@ -12,6 +12,6 @@ class ProviderContentSeeder extends Seeder
      */
     public function run(): void
     {
-        \app\Models\ProviderContent::factory()->count(10)->create();
+        \App\Models\ProviderContent::factory()->count(10)->create();
     }
 }

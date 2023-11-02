@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('provider_contents', function (Blueprint $table) {
             $table->id();
-            $table->string('content_id');
+            $table->string('provider_content_id');
             $table->string('external_resource_id');
             $table->string('type');
             $table->string('provider_platform_id');

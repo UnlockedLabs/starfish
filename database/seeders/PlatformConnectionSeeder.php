@@ -12,6 +12,6 @@ class PlatformConnectionSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\PlatformConnection::factory()->count(10)->create();
     }
 }

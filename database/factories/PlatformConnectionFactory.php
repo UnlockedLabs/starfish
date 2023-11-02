@@ -17,7 +17,9 @@ class PlatformConnectionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'consumer_platform_id' => $this->faker->numberBetween(1, 10),
+            'provider_platform_id' => $this->faker->numberBetween(1, 10),
+            'state' => 'enabled',
         ];
     }
 }

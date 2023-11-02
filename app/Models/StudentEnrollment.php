@@ -18,10 +18,6 @@ class StudentEnrollment extends Model
         "status",                        // Enum (ProviderUserResourceStatus)
     ];
 
-    protected $casts = [
-        'status' => StudentEnrollmentStatus::class,
-    ];
-
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

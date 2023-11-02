@@ -17,7 +17,10 @@ class ProviderContentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'provider_content_id' => $this->faker->randomDigitNotNull(),
+            'type' => 'course',
+            'external_resource_id' => $this->faker->randomDigitNotNull(),
+            'provider_platform_id' => $this->faker->randomDigitNotNull(),
         ];
     }
 }

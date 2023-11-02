@@ -12,6 +12,6 @@ class StudentEnrollmentSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        \App\Models\StudentEnrollment::class::factory()->count(10)->create();
     }
 }
