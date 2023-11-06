@@ -5,7 +5,6 @@ declare(strict_types=1);
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use App\Models\ProviderPlatform;
-use Psr\Http\Message\ResponseInterface;
 use App\Http\Requests\StudentEnrollmentRequest;
 
 /**
@@ -29,7 +28,6 @@ const GRADEABLE_STUDENTS = 'gradeable_students/';
 const READ = 'read/';
 const ANONYMOUS_SUBMISSIONS = 'anonymous_submissions/';
 
-use App\Models\ProviderUserResource;
 
 class CanvasServices
 
@@ -38,7 +36,6 @@ class CanvasServices
     private int $account_id;
     private string $access_key;
     private string $base_url;
-
     private string $api_url;
     public Client $client;
 
@@ -60,14 +57,6 @@ class CanvasServices
     }
 
     public function getAccessKey(): string
-    {
-        return $this->base_url;
-    }
-    public function getAccessKey(): string
-    {
-        return $this->base_url;
-    }
-    public function getBaseUrl(): string
     {
         return $this->base_url;
     }
@@ -146,55 +135,11 @@ class CanvasServices
         return json_encode($response);
     }
 
-    /**
-     * Retrive all user enrollments for a given provider (cached)
-     * @param string $userId
-     * @return Illuminate\Http\JsonResponse
-     * @throws \InvalidArgumentException
-     */
-    public function getCoursesByProvider(string $userId): Illuminate\Http\JsonResponse | \InvalidArgumentException
-    {
-        $time = time();
-        $enrollments = ProviderUserResource::where('user_id', $userId)->get();
-        $links = [];
-        foreach ($enrollments as $course) {
-            // Create the LTI deep linking JSON structure
-            $link = \ProviderPlatformServices::formatLtiDeepLinkFromCanvasCourse($course, $this->getBaseUrl());
-            // append each resource link
-            $links[] = $link;
-        }
-        if (empty($links)) {
-            return response()->json(['error' => 'No Provider Resources Found'], 400);
-        }
-        // Wrap the links in a container object if needed
-        $response = ['@context' => 'http://purl.imsglobal.org/ctx/lti/v1/ContentItem', 'items' => $links];
-        return response()->json($response);
-    }
-
-    public function updateProviderUserResources(string $userId): void
-    {
-        $courses = $this->listCoursesForUser($userId);
-        $courses = $courses->courses;
-        foreach ($courses as $course) {
-            $providerUserResource = ProviderUserResource::where('user_id', $userId)
-                ->where('provider_resource_id', $course->id)
-                ->first();
-            if (!$providerUserResource) {
-                $providerUserResource = ProviderUserResource::create([
-                    'provider_id' => $this->provider_id,
-                    'provider_resource_id' => $course->id,
-                    'user_id' => $userId,
-                    'status' => 'incomplete'
-                ]);
-            }
-        }
-    }
 
     // constructor for when we already have the providerId
     public static function getByProviderId($providerId): CanvasServices | \InvalidArgumentException
     {
         $provider = ProviderPlatform::findByProviderId($providerId);
-
         if (!$provider) {
             throw new \InvalidArgumentException('Invalid provider ID');
         }
@@ -217,23 +162,10 @@ class CanvasServices
         return $id;
     }
 
-    public function fmtAndValidateId(string $id): string
-    {
-        if ($id === 'self' || is_numeric($id)) {
-            // Append a trailing slash if needed
-            if (substr($id, -1) !== '/') {
-                $id .= '/';
-            }
-            return $id;
-        } else {
-            throw new \InvalidArgumentException('Invalid account ID');
-        }
-    }
-
     public static function handleResponse($response): mixed
     {
-        if ($response->getStatusCode() == 200) {
-            return json_decode($response->getBody()->__toString());
+        if ($response->isSuccess()) {
+            return json_decode($response->getBody());
         } else {
             throw new \Exception('API request failed with status code: ' . $response->getStatusCode());
         }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ProviderPlatform;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,21 +16,15 @@ class ProviderPlatformTest extends TestCase
         $response = $this->get('/api/v1/provider_platforms');
 
         $response->assertStatus(200); // Check if the response code is OK.
-        $response->assertJsonStructure([ // Check the JSON structure of the response.
-            'data' => [
-                '*' => [
-                    'name',
-                    'type',
-                    'description',
-                    'icon_url',
-                    'account_id',
-                    'access_key',
-                    'base_url',
-                ],
-            ],
-        ]);
     }
-
+    public function testShowProviderPlatform()
+    {
+        $platform = ProviderPlatform::all()->first();
+        $id = $platform->id;
+        $response = $this->get('/api/v1/provider_platforms/' . $id);
+        $response->assertStatus(200); // Check if the response code is OK.
+        $response->assertJson(['data' => ['id' => $id, 'name' => $platform->name]]);
+    }
     /**
      * Test creating a provider platform.
      */

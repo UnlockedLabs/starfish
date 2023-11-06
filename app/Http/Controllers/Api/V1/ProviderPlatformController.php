@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\ProviderPlatform;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Requests\StoreProviderPlatformRequest;
-use App\Http\Requests\ShowProviderPlatformRequest;
 use App\Http\Resources\ProviderPlatformResource;
 
 class ProviderPlatformController extends Controller
@@ -16,27 +14,29 @@ class ProviderPlatformController extends Controller
     // ****************************************************
     // GET: /api/provider_platforms/
     // ****************************************************
-    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index()
     {
         return ProviderPlatformResource::collection(ProviderPlatform::all(['*']));
     }
-    //
+
+
     // List information on a specific provider platform
     // ****************************************************
-    // GET: /api/v1/provider_platforms/{request_body}
+    // GET: /api/v1/provider_platforms/{id}
     // @param Request $request
     // @return JsonResponse
     // ****************************************************
-    public function show(ShowProviderPlatformRequest $request): ProviderPlatformResource|\Illuminate\Http\JsonResponse
+    public function show(string $id): ProviderPlatformResource|\Illuminate\Http\JsonResponse
     {
-        $providerPlatform = ProviderPlatform::where('id', $request->id)->first();
+        $providerPlatform = ProviderPlatform::where('id', $id)->first();
         if ($providerPlatform) {
             return new ProviderPlatformResource($providerPlatform);
         } else {
             return response()->json(INVALID_REQUEST_BODY, 401);
         }
     }
-    // Create a new provider platform (does not register connection)
+
+    // Create a new provider platform
     // ****************************************************
     //  POST: /api/provider_platform/{request_body}
     //  Request $request
@@ -53,7 +53,7 @@ class ProviderPlatformController extends Controller
         return new ProviderPlatformResource($provider);
     }
 
-    // Update a provider platform
+    // Update a provider platform (require all fields in JSON request body)
     // ****************************************************
     // PUT: /api/provider_platform/{request_body}
     // @param Request $request
@@ -72,15 +72,15 @@ class ProviderPlatformController extends Controller
         }
     }
 
-    // Delete a provider platform
+    // Delete a provider platform (use id from path parameter, not request body)
     // ****************************************************
-    // DELETE: /api/provider_platform/{request_body}
+    // DELETE: /api/provider_platform/{id}
     // Request $req example:
     // { "provider_id": 1 }
     // ****************************************************
-    public function destroy(Request $request): \Illuminate\Http\JsonResponse
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
-        $providerPlatform = ProviderPlatform::where('id', $request->input('id'))->first();
+        $providerPlatform = ProviderPlatform::where('id', $id)->first();
         if (!$providerPlatform) {
             return response()->json(['error' => 'Invalid provider ID'], 401);
         } else {

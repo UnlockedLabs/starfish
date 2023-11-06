@@ -22,14 +22,14 @@ class ShowProviderPlatformRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|string|max:255',
-            'name' => 'nullable|string|max:255',
-            'type' => 'nullable|string|max:255',
+            'id'          => 'required|string|max:255',
+            'name'        => 'nullable|string|max:255',
+            'type'        => 'nullable|string|max:255',
             'description' => 'nullable|string|max:255',
-            'icon_url' => 'nullable|url:http,https',
-            'account_id' => 'nullable|unique:provider_platforms,account_id',
-            'access_key' => 'nullable|unique:provider_platforms,access_key',
-            'base_url' => 'nullable|url:http,https',
+            'icon_url'    => 'nullable|url:http,https',
+            'account_id'  => 'nullable|unique:provider_platforms,account_id',
+            'access_key'  => 'nullable|unique:provider_platforms,access_key',
+            'base_url'    => 'nullable|url:http,https',
         ];
     }
 }
