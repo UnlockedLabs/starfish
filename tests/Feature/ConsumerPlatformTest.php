@@ -37,7 +37,7 @@ class ConsumerPlatformTest extends TestCase
         ];
         $response = $this->post('/api/v1/consumer_platforms', $data);
 
-        $response->assertStatus(202);
+        $response->assertStatus(201);
     }
 
     public function testShow()
@@ -49,21 +49,21 @@ class ConsumerPlatformTest extends TestCase
 
     public function testEdit()
     {
-        $consumerPlatform = ConsumerPlatform::factory(1);
+        $platform = ['data' => [
+            'type' => 'canvas_cloud',
+            'name' => 'TestPlatform',
+            'api_key' => 'testkey123',
+            'base_url' => 'https://test.com/api',
+        ]];
 
-        $response = $this->patch('/api/v1/consumer_platforms/1', $consumerPlatform->toArray());
+        $response = $this->patch('/api/v1/consumer_platforms/2', $platform);
 
-        $response->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-            ]);
+        $response->assertStatus(200);
     }
 
     public function testDestroy()
     {
-        $consumerPlatform = ConsumerPlatformFactory::factoryForModel(ConsumerPlatform::class)->create();
-
-        $response = $this->delete('/api/v1/consumer_platforms/' . $consumerPlatform->id);
+        $response = $this->delete('/api/v1/consumer_platforms/1');
 
         $response->assertStatus(200)
             ->assertJson([

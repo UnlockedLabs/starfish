@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('student_enrollments', function (Blueprint $table) {
             $table->id();
-            $table->string('provider_user_id');
+            $table->integer('provider_user_id');
             $table->foreignId('provider_content_id')->constrained();
             $table->foreignId('provider_platform_id')->constrained();
             $table->string('status')->default('not_completed');

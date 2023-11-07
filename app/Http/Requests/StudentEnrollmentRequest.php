@@ -26,7 +26,7 @@ class StudentEnrollmentRequest extends FormRequest
         return [
             // we should be able to look up everything by the student
             'provider_user_id' => 'required|string|max:255',
-            'provider_id' => 'required|string|max:255',
+            'provider_platform_id' => 'required|string|max:255',
             'provider_content_id' => 'nullable|string|max:255',
             'status' => 'nullable|string|max:255',
         ];

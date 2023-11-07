@@ -6,12 +6,9 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\StudentEnrollment;
 use App\Http\Controllers\Api\V1\Controller;
-use App\Http\Requests\StudentEnrollmentRequest;
 use App\Http\Resources\StudentEnrollmentResource;
 use App\Enums\StudentEnrollmentStatus;
-use App\Http\Requests\ShowStudentEnrollmentRequest;
 use App\Models\ProviderContent;
-use App\Http\Requests\StoreProviderContentRequest;
 use App\Http\Requests\UpdateStudentEnrollmentRequest;
 
 class StudentEnrollmentController extends Controller
@@ -22,11 +19,10 @@ class StudentEnrollmentController extends Controller
     // @param StudentEnrollmentRequest $request
     // @return StudentEnrollmentResource
     // ****************************************************
-    public function show(ShowStudentEnrollmentRequest $request): StudentEnrollmentResource
+    public function show(string $id)
     {
-        $validated = $request->validated();
-        $enrollments = StudentEnrollment::where('user_id', $validated['provider_user_id'])->and('status', StudentEnrollmentStatus::IN_PROGRESS)->get();
-        return new StudentEnrollmentResource($enrollments);
+        $enrollments = StudentEnrollment::where('id', $id)->get();
+        return StudentEnrollmentResource::collection($enrollments);
     }
 
     // Changes the status of a course for a user
@@ -42,9 +38,12 @@ class StudentEnrollmentController extends Controller
         } catch (\Exception) {
             return response()->json(INVALID_REQUEST_BODY, 401);
         }
-        $content = ProviderContent::where('provider_id', $validated['provider_id'])
+        $content = ProviderContent::where(
+            'provider_id',
+            $validated['provider_id']
+        )
             ->where('provider_resource_id', $validated['provider_resource_id'])
-            ->where('user_id', $validated['user_id'])
+            ->where('provider_user_id', $validated['provider_user_id'])
             ->first();
 
         if (!$content) {

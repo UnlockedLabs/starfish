@@ -10,10 +10,9 @@ class StudentEnrollmentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'provider_id' => $this->provider_id,
+            'provider_user_id' => $this->provider_user_id,
             'provider_content_id' => $this->provider_content_id,
-            'user_id' => $this->user_id,
+            'provider_platform_id' => $this->provider_platform_id,
             'status' => $this->status,
         ];
     }
