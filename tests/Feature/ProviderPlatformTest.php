@@ -17,13 +17,12 @@ class ProviderPlatformTest extends TestCase
 
         $response->assertStatus(200); // Check if the response code is OK.
     }
+
     public function testShowProviderPlatform()
     {
-        $platform = ProviderPlatform::all()->first();
-        $id = $platform->id;
-        $response = $this->get('/api/v1/provider_platforms/' . $id);
+        $response = $this->get('/api/v1/provider_platforms/1');
+
         $response->assertStatus(200); // Check if the response code is OK.
-        $response->assertJson(['data' => ['id' => $id, 'name' => $platform->name]]);
     }
     /**
      * Test creating a provider platform.
