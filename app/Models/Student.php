@@ -11,14 +11,11 @@ class Student extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'id',
-    ];
-
     public function studentMapping(): HasOne
     {
         return $this->hasOne(StudentMapping::class, 'student_id');
     }
+
     public function studentEnrollments(): HasManyThrough
     {
         return $this->hasManyThrough(StudentEnrollment::class, StudentMapping::class, 'student_id', 'provider_user_id', 'id');

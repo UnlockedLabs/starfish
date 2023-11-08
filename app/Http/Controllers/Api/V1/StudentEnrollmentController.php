@@ -7,9 +7,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Models\StudentEnrollment;
 use App\Http\Controllers\Api\V1\Controller;
 use App\Http\Resources\StudentEnrollmentResource;
-use App\Enums\StudentEnrollmentStatus;
-use App\Models\ProviderContent;
 use App\Http\Requests\UpdateStudentEnrollmentRequest;
+use App\Models\StudentMapping;
 
 class StudentEnrollmentController extends Controller
 {
@@ -21,7 +20,10 @@ class StudentEnrollmentController extends Controller
     // ****************************************************
     public function show(string $id)
     {
-        $enrollments = StudentEnrollment::where('id', $id)->get();
+        $mapping = StudentMapping::where('student_id', $id)->get();
+        $enrollments = StudentEnrollment::where('provider_user_id', $mapping->provider_user_id)
+            ->where('provider_platform_id', $mapping->provider_platform_id)->where('status', 'in_progress')->all();
+
         return StudentEnrollmentResource::collection($enrollments);
     }
 
@@ -31,26 +33,19 @@ class StudentEnrollmentController extends Controller
     // @param UpdateStudentEnrollmentRequest $request
     // @return Illuminate\Http\JsonResponse
     // ****************************************************
-    public function edit(UpdateStudentEnrollmentRequest $request): \Illuminate\Http\JsonResponse
+    public function edit(string $id, UpdateStudentEnrollmentRequest $request): \Illuminate\Http\JsonResponse
     {
-        try {
-            $validated = $request->validated();
-        } catch (\Exception) {
-            return response()->json(INVALID_REQUEST_BODY, 401);
-        }
-        $content = ProviderContent::where(
-            'provider_id',
-            $validated['provider_id']
-        )
-            ->where('provider_resource_id', $validated['provider_resource_id'])
-            ->where('provider_user_id', $validated['provider_user_id'])
-            ->first();
+        $student = StudentMapping::where('student_id', $id);
+        $validated = $request->validated();
+        $mapping = StudentEnrollment::where('provider_user_id', $student->provider_user_id)
+            ->where('provider_platform_id', $student->provider_platform_id)
+            ->where('provider_content_id', $validated['provider_content_id'])->first();
 
-        if (!$content) {
+        if (!$mapping) {
             return response()->json(INVALID_REQUEST_BODY, 401);
         }
-        $content->status = $validated['status'];
-        $content->save();
+        $mapping->status = $validated['status'];
+        $mapping->save();
         return response()->json(['success' => 'true'], 200);
     }
 }

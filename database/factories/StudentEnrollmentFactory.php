@@ -10,7 +10,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class StudentEnrollmentFactory extends Factory
 {
     /**
-     * Define the model's default state.
+        "student_id",
+        "provider_user_id",
+        "provider_platform_id",
+        "consumer_user_id",
+        "consumer_platform_id",
      *
      * @return array<string, mixed>
      */

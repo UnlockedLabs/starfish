@@ -1,9 +1,6 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Database\Factories\ConsumerPlatformFactory;
-use App\Models\StudentEnrollment;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Tests\TestCase;
 
 class StudentEnrollmentControllerTest extends TestCase
@@ -19,14 +16,14 @@ class StudentEnrollmentControllerTest extends TestCase
 
     public function testEdit()
     {
-        $studentEnrollmeent = ['data' => [
-            'provider_user_id' => 2,
-            'provider_content_id' => 183,
-            'provider_platform_id' => 1,
+        $studentEnrollment = [
+            'provider_user_id' => '1',
+            'provider_content_id' => '6',
+            'provider_platform_id' => '4',
             'status' => 'in_progress',
-        ]];
+        ];
 
-        $response = $this->patch('/api/v1/students/2/courses', $studentEnrollmeent);
+        $response = $this->patch('/api/v1/students/1/courses', $studentEnrollment);
 
         $response->assertStatus(200);
     }

@@ -13,6 +13,7 @@ class ProviderPlatformTest extends TestCase
      */
     public function testGetProviderPlatforms()
     {
+        $this->seed();
         $response = $this->get('/api/v1/provider_platforms');
 
         $response->assertStatus(200); // Check if the response code is OK.
@@ -20,6 +21,7 @@ class ProviderPlatformTest extends TestCase
 
     public function testShowProviderPlatform()
     {
+        $this->seed();
         $response = $this->get('/api/v1/provider_platforms/1');
 
         $response->assertStatus(200); // Check if the response code is OK.
@@ -29,6 +31,7 @@ class ProviderPlatformTest extends TestCase
      */
     public function testCreateProviderPlatform()
     {
+        $this->seed();
         $data = [
             'name' => 'TestPlatform',
             'type' => 'canvas_cloud',

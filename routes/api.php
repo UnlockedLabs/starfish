@@ -26,5 +26,5 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('platform_connections', PlatformConnectionController::class);
 
     Route::get('students/{id}/courses', [StudentEnrollmentController::class, 'show']);
-    Route::patch('students/{id}/courses', [StudentEnrollmentController::class, 'update']);
+    Route::patch('students/{id}/courses', [StudentEnrollmentController::class, 'edit']);
 });
