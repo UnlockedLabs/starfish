@@ -15,11 +15,11 @@ class StudentMappingFactory extends Factory
     public function definition()
     {
         return [
-            'student_id' => Student::all()->random()->id,
+            'student_id' => Student::factory()->create(),
             'provider_user_id' => $this->faker->randomDigitNotNull,
-            'provider_platform_id' => ProviderPlatform::all()->random()->id,
+            'provider_platform_id' => ProviderPlatform::factory()->create(),
             'consumer_user_id' => $this->faker->randomDigitNotNull,
-            'consumer_platform_id' => ConsumerPlatform::all()->random()->id,
+            'consumer_platform_id' => ConsumerPlatform::factory()->create(),
         ];
     }
 }
