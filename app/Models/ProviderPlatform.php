@@ -12,7 +12,6 @@ class ProviderPlatform extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'type',
         'name',
         'description',

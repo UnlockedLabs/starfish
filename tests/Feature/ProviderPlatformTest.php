@@ -6,32 +6,32 @@ use Tests\TestCase;
 
 class ProviderPlatformTest extends TestCase
 {
-    use RefreshDatabase; // This ensures a fresh database for each test.
-
+    public function seedDatabase()
+    {
+        $this->seed();
+    }
     /**
      * Test retrieving provider platforms.
      */
     public function testGetProviderPlatforms()
     {
-        $this->seed();
         $response = $this->get('/api/v1/provider_platforms');
 
-        $response->assertStatus(200); // Check if the response code is OK.
+        $response->assertStatus(200);
     }
 
     public function testShowProviderPlatform()
     {
-        $this->seed();
         $response = $this->get('/api/v1/provider_platforms/1');
 
-        $response->assertStatus(200); // Check if the response code is OK.
+        $response->assertStatus(200);
     }
+
     /**
      * Test creating a provider platform.
      */
     public function testCreateProviderPlatform()
     {
-        $this->seed();
         $data = [
             'name' => 'TestPlatform',
             'type' => 'canvas_cloud',

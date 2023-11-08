@@ -8,7 +8,6 @@ use Tests\TestCase;
 
 class ConsumerPlatformTest extends TestCase
 {
-    use RefreshDatabase; // This ensures a fresh database for each test.
     public function testIndex()
     {
         $response = $this->get('/api/v1/consumer_platforms');
@@ -49,14 +48,14 @@ class ConsumerPlatformTest extends TestCase
 
     public function testEdit()
     {
-        $platform = ['data' => [
+        $platform = [
             'type' => 'canvas_cloud',
             'name' => 'TestPlatform',
             'api_key' => 'testkey123',
             'base_url' => 'https://test.com/api',
-        ]];
+        ];
 
-        $response = $this->patch('/api/v1/consumer_platforms/2', $platform);
+        $response = $this->put('/api/v1/consumer_platforms/2', $platform);
 
         $response->assertStatus(200);
     }

@@ -25,7 +25,7 @@ class ConsumerPlatformController extends Controller
      */
     public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return ConsumerPlatformResource::collection(ConsumerPlatform::all(['*']));
+        return ConsumerPlatformResource::collection(ConsumerPlatform::all());
     }
 
     /**

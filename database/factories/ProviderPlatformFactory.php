@@ -17,7 +17,7 @@ class ProviderPlatformFactory extends Factory
             'description' => $this->faker->sentence,
             'icon_url' => $this->faker->imageUrl,
             'account_id' => $this->faker->randomNumber,
-            'access_key' => $this->faker->unique()->word,
+            'access_key' => $this->faker->word,
             'base_url' => $this->faker->url,
         ];
     }

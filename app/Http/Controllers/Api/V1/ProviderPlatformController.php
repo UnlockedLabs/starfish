@@ -16,7 +16,7 @@ class ProviderPlatformController extends Controller
     // ****************************************************
     public function index()
     {
-        return ProviderPlatformResource::collection(ProviderPlatform::all(['*']));
+        return ProviderPlatformResource::collection(ProviderPlatform::all());
     }
 
 
@@ -30,7 +30,7 @@ class ProviderPlatformController extends Controller
     {
         $providerPlatform = ProviderPlatform::where('id', $id)->first();
         if ($providerPlatform) {
-            return new ProviderPlatformResource($providerPlatform);
+            return ProviderPlatformResource::make($providerPlatform);
         } else {
             return response()->json(INVALID_REQUEST_BODY, 401);
         }
@@ -48,7 +48,8 @@ class ProviderPlatformController extends Controller
         } catch (\Exception) {
             return response()->json(INVALID_REQUEST_BODY, 401);
         }
-        $provider = ProviderPlatform::create($validated);
+        $provider = new ProviderPlatform($validated);
+        $provider->save();
         // Create a new platform connection.
         return new ProviderPlatformResource($provider);
     }
