@@ -29,7 +29,7 @@ class ConsumerPlatformTest extends TestCase
     public function testStore()
     {
         $data = [
-            'type' => 'canvas_cloud',
+            'type' => 'unlockedv1',
             'name' => 'TestPlatform',
             'api_key' => 'testkey123',
             'base_url' => 'https://test.com/api',
@@ -48,14 +48,9 @@ class ConsumerPlatformTest extends TestCase
 
     public function testEdit()
     {
-        $platform = [
-            'type' => 'canvas_cloud',
-            'name' => 'TestPlatform',
-            'api_key' => 'testkey123',
-            'base_url' => 'https://test.com/api',
-        ];
+        $platform = ConsumerPlatform::factory()->create();
 
-        $response = $this->put('/api/v1/consumer_platforms/2', $platform);
+        $response = $this->put('/api/v1/consumer_platforms/2', $platform->toArray());
 
         $response->assertStatus(200);
     }

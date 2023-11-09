@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\ProviderPlatform;
+use App\Models\StudentMapping;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,9 +23,9 @@ class StudentEnrollmentFactory extends Factory
     public function definition(): array
     {
         return [
-            "provider_user_id" => $this->faker->randomDigitNotNull,              // Student ID in our system (maps to appropriate ID)
+            "provider_user_id" =>  StudentMapping::factory()->create()->provider_user_id,              // Student ID in our system (maps to appropriate ID)
             "provider_content_id" => $this->faker->randomDigitNotNull,           // Course ID
-            "provider_platform_id" => $this->faker->randomDigitNotNull,
+            "provider_platform_id" => ProviderPlatform::factory()->create()->id,
             "status" => "enabled",                        // Enum (ProviderUserResourceStatus)
         ];
     }

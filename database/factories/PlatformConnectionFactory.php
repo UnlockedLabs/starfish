@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\ConsumerPlatform;
+use App\Models\ProviderPlatform;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,8 +19,8 @@ class PlatformConnectionFactory extends Factory
     public function definition(): array
     {
         return [
-            'consumer_platform_id' => $this->faker->numberBetween(1, 10),
-            'provider_platform_id' => $this->faker->numberBetween(1, 10),
+            'consumer_platform_id' => ConsumerPlatform::factory()->create()->id,
+            'provider_platform_id' => ProviderPlatform::factory()->create()->id,
             'state' => 'enabled',
         ];
     }

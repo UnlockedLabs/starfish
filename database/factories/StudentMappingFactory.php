@@ -15,13 +15,14 @@ class StudentMappingFactory extends Factory
 {
     public function definition()
     {
-        DB::statement('PRAGMA foreign_keys = 0');
+        $prov = ProviderPlatform::factory()->create();
+        $con = ConsumerPlatform::factory()->create();
         return [
             'student_id' => Student::factory()->create(),
             'provider_user_id' => $this->faker->randomDigitNotNull,
-            'provider_platform_id' => ProviderPlatform::factory()->create(),
+            'provider_platform_id' => $prov->id,
             'consumer_user_id' => $this->faker->randomDigitNotNull,
-            'consumer_platform_id' => ConsumerPlatform::factory()->create(),
+            'consumer_platform_id' => $con->id,
         ];
     }
 }

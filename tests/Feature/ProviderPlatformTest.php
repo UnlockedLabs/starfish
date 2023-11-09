@@ -6,15 +6,13 @@ use Tests\TestCase;
 
 class ProviderPlatformTest extends TestCase
 {
-    public function seedDatabase()
-    {
-        $this->seed();
-    }
+    use RefreshDatabase;
     /**
      * Test retrieving provider platforms.
      */
     public function testGetProviderPlatforms()
     {
+        $this->seed();
         $response = $this->get('/api/v1/provider_platforms');
 
         $response->assertStatus(200);
@@ -22,7 +20,9 @@ class ProviderPlatformTest extends TestCase
 
     public function testShowProviderPlatform()
     {
-        $response = $this->get('/api/v1/provider_platforms/1');
+
+        $this->seed();
+        $response = $this->get('/api/v1/provider_platforms/2');
 
         $response->assertStatus(200);
     }
@@ -32,6 +32,7 @@ class ProviderPlatformTest extends TestCase
      */
     public function testCreateProviderPlatform()
     {
+        $this->seed();
         $data = [
             'name' => 'TestPlatform',
             'type' => 'canvas_cloud',

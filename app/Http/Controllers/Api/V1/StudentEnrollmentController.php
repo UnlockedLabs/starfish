@@ -20,9 +20,10 @@ class StudentEnrollmentController extends Controller
     // ****************************************************
     public function show(string $id)
     {
-        $mapping = StudentMapping::where('student_id', $id)->get();
+        $mapping = StudentMapping::where('consumer_user_id', $id)->get();
+
         $enrollments = StudentEnrollment::where('provider_user_id', $mapping->provider_user_id)
-            ->where('provider_platform_id', $mapping->provider_platform_id)->where('status', 'in_progress')->all();
+            ->where('provider_platform_id', $mapping->provider_platform_id)->all();
 
         return StudentEnrollmentResource::collection($enrollments);
     }

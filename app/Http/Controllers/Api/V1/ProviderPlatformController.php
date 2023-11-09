@@ -28,7 +28,8 @@ class ProviderPlatformController extends Controller
     // ****************************************************
     public function show(string $id): ProviderPlatformResource|\Illuminate\Http\JsonResponse
     {
-        $providerPlatform = ProviderPlatform::where('id', $id)->first();
+        $providerPlatform = ProviderPlatform::where('id', $id)->get()->first();
+
         if ($providerPlatform) {
             return ProviderPlatformResource::make($providerPlatform);
         } else {
