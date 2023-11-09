@@ -65,7 +65,7 @@ class ProviderPlatformController extends Controller
     public function update(StoreProviderPlatformRequest $request): ProviderPlatformResource|\Illuminate\Http\JsonResponse
     {
         $validated = $request->validated();
-        $providerPlatform = ProviderPlatform::where($validated)->first();
+        $providerPlatform = ProviderPlatform::where('id', $validated->id)->first();
         if (!$providerPlatform) {
             return response()->json(['error' => 'Invalid provider ID'], 401);
         } else {
