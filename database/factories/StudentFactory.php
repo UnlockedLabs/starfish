@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class StudentFactory extends Factory
 {
+    protected $model = \App\Models\Student::class;
     /**
      * Define the model's default state.
      *
@@ -17,8 +17,6 @@ class StudentFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            'id' => Student::factory()->create()->id,
-        ];
+        return [];
     }
 }

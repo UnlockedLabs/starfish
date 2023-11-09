@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ConsumerPlatform;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ConsumerPlatformFactory extends Factory
 {
+    protected $model = ConsumerPlatform::class;
     /**
      * Define the model's default state.
      *

@@ -44,41 +44,37 @@ class ProviderPlatformController extends Controller
     // ****************************************************
     public function store(StoreProviderPlatformRequest $req): ProviderPlatformResource
     {
-        try {
-            $validated = $req->validated();
-        } catch (\Exception) {
+        $valid = $req->validated();
+        $provider = new ProviderPlatform($valid);
+        if (!$valid) {
             return response()->json(INVALID_REQUEST_BODY, 401);
         }
-        $provider = new ProviderPlatform($validated);
         $provider->save();
-        // Create a new platform connection.
         return new ProviderPlatformResource($provider);
     }
 
     // Update a provider platform (require all fields in JSON request body)
     // ****************************************************
-    // PUT: /api/provider_platform/{request_body}
+    // PUT: /api/provider_platform/{id} {request_body}
     // @param Request $request
     // @return JsonResponse
     // Request $request
     // ****************************************************
-    public function update(StoreProviderPlatformRequest $request): ProviderPlatformResource|\Illuminate\Http\JsonResponse
+    public function update(string $id, StoreProviderPlatformRequest $request): ProviderPlatformResource | \Illuminate\Http\JsonResponse
     {
         $validated = $request->validated();
-        $providerPlatform = ProviderPlatform::where('id', $validated->id)->first();
+        $providerPlatform = ProviderPlatform::where('id', $id)->first();
         if (!$providerPlatform) {
-            return response()->json(['error' => 'Invalid provider ID'], 401);
+            return response()->json(['error' => 'Invalid provider platform ID'], 401);
         } else {
             $providerPlatform->update($validated);
-            return new ProviderPlatformResource($providerPlatform);
+            return ProviderPlatformResource::make($providerPlatform);
         }
     }
 
     // Delete a provider platform (use id from path parameter, not request body)
     // ****************************************************
-    // DELETE: /api/provider_platform/{id}
-    // Request $req example:
-    // { "provider_id": 1 }
+    // DELETE: /api/v1/provider_platform/{id}
     // ****************************************************
     public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
@@ -87,7 +83,7 @@ class ProviderPlatformController extends Controller
             return response()->json(['error' => 'Invalid provider ID'], 401);
         } else {
             $providerPlatform->delete();
-            return response()->json(json_encode($providerPlatform));
+            return response()->json(json_encode(["success" => 'Provider Platform deleted successfully']), 200);
         }
     }
 }

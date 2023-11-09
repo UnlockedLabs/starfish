@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('provider_content_id');
             $table->string('external_resource_id');
             $table->string('type');
-            $table->string('provider_platform_id');
+            $table->integer('provider_platform_id')->references('id')->on('provider_platforms');
             $table->timestamps();
         });
     }

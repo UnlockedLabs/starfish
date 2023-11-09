@@ -9,6 +9,7 @@ use App\Http\Requests\StorePlatformConnectionRequest;
 use App\Http\Requests\UpdatePlatformConnectionRequest;
 use App\Models\PlatformConnection;
 use App\Http\Resources\PlatformConnectionResource;
+use Illuminate\Support\Facades\DB;
 
 class PlatformConnectionController extends Controller
 {
@@ -24,6 +25,21 @@ class PlatformConnectionController extends Controller
         return  PlatformConnectionResource::collection(PlatformConnection::all());
     }
 
+    // look up a relative connection per consumer platform id
+    // *************************************************************
+    // GET: /api/v1/consumer_platforms/{id}/platform_connection
+    // Request $req example:
+    //  "consumer_id": 1 || "provider_id": 1
+    // *************************************************************
+    public function show(string $id): PlatformConnectionResource
+    {
+        $platform = PlatformConnection::where('consumer_platform_id', $id)->first();
+        if (!$platform) {
+            return response()->json(['error' => 'No matching platform connection found'], 401);
+        }
+        return new PlatformConnectionResource($platform);
+    }
+
     /* Create a new platform connection */
     //*************************************************************
     // POST: /api/v1/platform_connection/
@@ -32,61 +48,41 @@ class PlatformConnectionController extends Controller
     // *************************************************************
     public function store(StorePlatformConnectionRequest $req): PlatformConnectionResource
     {
-        $validated = $req->validated();
-        $exists = PlatformConnection::where($validated)->first();
-        if ($exists) {
-            return response()->json(['error' => 'Platform connection already exists'], 401);
-        }
         try {
-            $platform_connection = PlatformConnection::create($req->validated());
-            return new PlatformConnectionResource($platform_connection);
+            $platform_connection = new PlatformConnection($req->validated());
         } catch (\Exception) {
             return response()->json(INVALID_REQUEST_BODY, 401);
         }
-    }
-    // Get a specific platform connection by consumer or provider id
-    // *************************************************************
-    // GET: /api/v1/platform_connection/{id}
-    // Request $req example:
-    //  "consumer_id": 1 || "provider_id": 1
-    // *************************************************************
-    public function show(ShowPlatformConnectionRequest $req): PlatformConnectionResource
-    {
-        try {
-            $validated = $req->validated();
-            return new PlatformConnectionResource(PlatformConnection::where($validated)->first());
-        } catch (\Exception) {
-            return response()->json(INVALID_REQUEST_BODY, 401);
-        }
+
+        return new PlatformConnectionResource($platform_connection);
     }
 
     // Update a platform connection (The only possible update here would be the state)
     // *************************************************************
-    // PUT: /api/v1/platform_connection/{request_body}
+    // PUT: /api/v1/consumer_platforms/{id}/platform_connections/{request_body}
     // Request $req example:
     // { "consumer_id": 1, "provider_id": 1, "state": "enabled" }
     // *************************************************************
-    public function update(UpdatePlatformConnectionRequest $req): PlatformConnectionResource
+    public function update(string $id, UpdatePlatformConnectionRequest $req): PlatformConnectionResource
     {
+        // they should have both the id's, and a new state
+        $conn = PlatformConnection::where('consumer_platform_id', $id)->first();
         $validated = $req->validated();
-        $PlatformConnection = PlatformConnection::where($validated)->first();
-        $PlatformConnection->state = $validated['state'];
-        if (!$PlatformConnection) {
-            return response()->json(['error' => 'No matching platform connection found'], 401);
-        }
-        return new PlatformConnectionResource($PlatformConnection->save());
+        $conn->update('state', $validated['state']);
+        $conn->save();
+        return new PlatformConnectionResource($conn);
     }
 
     // Delete a platform connection
     // *************************************************************
-    // DELETE: /api/v1/platform_connection/{request_body}
+    // DELETE: /api/v1/consumer_platforms/{id}/platform_connection/{request_body}
     // Request $req example:
     // { "consumer_id": 1, "provider_id": 1 }
     // *************************************************************
-    public function delete(ShowPlatformConnectionRequest $req): \Illuminate\Http\JsonResponse
+    public function delete(string $id): \Illuminate\Http\JsonResponse
     {
         try {
-            PlatformConnectionRequest::where($req->validated())->delete();
+            PlatformConnection::where('consumer_platform_id', $id)->delete();
             return response()->json(['success' => 'Platform connection deleted successfully'], 200);
         } catch (\Exception) {
             return response()->json(INVALID_REQUEST_BODY, 401);

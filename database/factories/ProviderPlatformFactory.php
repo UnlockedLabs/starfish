@@ -5,11 +5,15 @@ namespace Database\Factories;
 use App\Models\ProviderPlatform;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/*
+@extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProviderPlatform>
+*/
+
 class ProviderPlatformFactory extends Factory
 {
     protected $model = ProviderPlatform::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
             'name' => $this->faker->name,

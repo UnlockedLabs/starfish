@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class StudentEnrollmentSeeder extends Seeder
@@ -12,6 +11,6 @@ class StudentEnrollmentSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\StudentEnrollment::class::factory()->count(10)->create();
+        \App\Models\StudentEnrollment::factory()->count(10)->create();
     }
 }

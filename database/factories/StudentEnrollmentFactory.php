@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\ProviderPlatform;
+use App\Models\StudentEnrollment;
 use App\Models\StudentMapping;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -11,21 +12,16 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class StudentEnrollmentFactory extends Factory
 {
+    protected $model = StudentEnrollment::class;
     /**
-        "student_id",
-        "provider_user_id",
-        "provider_platform_id",
-        "consumer_user_id",
-        "consumer_platform_id",
-     *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
         return [
-            "provider_user_id" =>  StudentMapping::factory()->create()->provider_user_id,              // Student ID in our system (maps to appropriate ID)
-            "provider_content_id" => $this->faker->randomDigitNotNull,           // Course ID
-            "provider_platform_id" => ProviderPlatform::factory()->create()->id,
+            "provider_user_id" =>  \App\Models\StudentMapping::factory(),
+            "provider_content_id" =>  \App\Models\ProviderContent::factory(),
+            "provider_platform_id" => \App\Models\ProviderPlatform::factory(),
             "status" => "enabled",                        // Enum (ProviderUserResourceStatus)
         ];
     }

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('student_enrollments', function (Blueprint $table) {
             $table->id();
-            $table->integer('provider_user_id');
-            $table->foreignId('provider_content_id')->constrained();
+            $table->integer('provider_user_id')->references('provider_user_id')->on('student_mappings');
+            $table->foreignId('provider_content_id')->references('id')->on('provider_contents');
             $table->foreignId('provider_platform_id')->constrained();
             $table->string('status')->default('not_completed');
             $table->timestamps();

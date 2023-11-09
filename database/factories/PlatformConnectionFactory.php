@@ -2,8 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\ConsumerPlatform;
-use App\Models\ProviderPlatform;
+use App\Models\PlatformConnection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -11,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class PlatformConnectionFactory extends Factory
 {
+    protected $model = PlatformConnection::class;
     /**
      * Define the model's default state.
      *
@@ -19,8 +19,8 @@ class PlatformConnectionFactory extends Factory
     public function definition(): array
     {
         return [
-            'consumer_platform_id' => ConsumerPlatform::factory()->create()->id,
-            'provider_platform_id' => ProviderPlatform::factory()->create()->id,
+            'consumer_platform_id' => \App\Models\ConsumerPlatform::factory(),
+            'provider_platform_id' => \App\Models\ProviderPlatform::factory(),
             'state' => 'enabled',
         ];
     }

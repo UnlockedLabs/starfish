@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('student_mappings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained();
-            $table->string('provider_user_id');
+            $table->integer('provider_user_id')->references('provider_user_id')->on('student_enrollments');
             $table->foreignId('provider_platform_id')->constrained();
-            $table->string('consumer_user_id');
+            $table->integer('consumer_user_id');
             $table->foreignId('consumer_platform_id')->constrained();
             $table->timestamps();
         });

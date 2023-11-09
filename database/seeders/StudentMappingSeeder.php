@@ -1,6 +1,6 @@
 <?php
 
-namespace database\seeders;
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
@@ -8,6 +8,6 @@ class StudentMappingSeeder extends Seeder
 {
     public function run(): void
     {
-        \App\Models\StudentMapping::factory()->count(10)->create();
+        \App\Models\StudentMapping::factory(10)->create();
     }
 }

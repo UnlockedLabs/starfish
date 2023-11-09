@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ProviderContent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ProviderContentFactory extends Factory
 {
+    protected $model = ProviderContent::class;
     /**
      * Define the model's default state.
      *
@@ -20,7 +22,7 @@ class ProviderContentFactory extends Factory
             'provider_content_id' => $this->faker->randomDigitNotNull(),
             'type' => 'course',
             'external_resource_id' => $this->faker->randomDigitNotNull(),
-            'provider_platform_id' => $this->faker->randomDigitNotNull(),
+            'provider_platform_id' => \App\Models\ProviderPlatform::factory(),
         ];
     }
 }
