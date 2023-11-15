@@ -3,46 +3,40 @@
 namespace App\Http\Controllers\Api\V1;
 
 
-use App\Http\Requests\PlatformConnectionRequest;
-use App\Http\Requests\ShowPlatformConnectionRequest;
 use App\Http\Requests\StorePlatformConnectionRequest;
 use App\Http\Requests\UpdatePlatformConnectionRequest;
+use App\Http\Resources\ConsumerProviderResource;
 use App\Models\PlatformConnection;
 use App\Http\Resources\PlatformConnectionResource;
-use Illuminate\Support\Facades\DB;
+use App\Models\ConsumerPlatform;
 
 class PlatformConnectionController extends Controller
 {
 
     /* Get all platform connections */
     //*************************************************************
-    // GET: /api/v1/platform_connection/
+    // GET: /api/v1/consumer_platforms/{id}/platform_connections
     // Request $req example:
-    // { "consumer_id": 1 }
     // *************************************************************
-    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index(string $id): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return  PlatformConnectionResource::collection(PlatformConnection::all());
+        return  ConsumerProviderResource::collection(PlatformConnection::all()->find($id));
     }
 
     // look up a relative connection per consumer platform id
     // *************************************************************
-    // GET: /api/v1/consumer_platforms/{id}/platform_connection
+    // GET: /api/v1/consumer_platforms/{id}/platform_connection/{id}
     // Request $req example:
-    //  "consumer_id": 1 || "provider_id": 1
     // *************************************************************
-    public function show(string $id): PlatformConnectionResource
+    public function show(string $id): ConsumerProviderResource
     {
-        $platform = PlatformConnection::where('consumer_platform_id', $id)->first();
-        if (!$platform) {
-            return response()->json(['error' => 'No matching platform connection found'], 401);
-        }
-        return new PlatformConnectionResource($platform);
+        $platform = ConsumerPlatform::find($id);
+        return ConsumerProviderResource::make($platform->providerPlatform);
     }
 
     /* Create a new platform connection */
     //*************************************************************
-    // POST: /api/v1/platform_connection/
+    // POST: /api/v1/consumer_platforms/{id}/platform_connection/
     // PlatformConnectionRequest $req example:
     // { "consumer_id": 1, "provider_id": 1, "state": "enabled" }
     // *************************************************************
