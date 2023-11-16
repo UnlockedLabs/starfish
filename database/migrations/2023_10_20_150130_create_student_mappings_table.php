@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('student_mappings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained();
+            $table->foreignUuid('student_id')->constrained();
             $table->integer('provider_user_id')->references('provider_user_id')->on('student_enrollments');
             $table->foreignId('provider_platform_id')->constrained();
             $table->integer('consumer_user_id');
