@@ -23,12 +23,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::apiResource('provider_platforms', ProviderPlatformController::class);
     Route::apiResource('consumer_platforms', ConsumerPlatformController::class);
-    Route::apiResource('platform_connections', PlatformConnectionController::class);
 
     Route::get('platform_connections', [PlatformConnectionController::class, 'index']);
 
     Route::get('consumer_platforms/{id}/platform_connections', [PlatformConnectionController::class, 'show']);
-    Route::post('consumer_platforms/{id}platform_connections', [PlatformConnectionController::class, 'store']);
+    Route::post('consumer_platforms/{id}/platform_connections', [PlatformConnectionController::class, 'store']);
     Route::patch('consumer_platforms/{id}/platform_connections', [PlatformConnectionController::class, 'update']);
     Route::delete('consumer_platforms/{id}/platform_connections', [PlatformConnectionController::class, 'destroy']);
 

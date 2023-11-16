@@ -15,12 +15,12 @@ class PlatformConnectionController extends Controller
 
     /* Get all platform connections */
     //*************************************************************
-    // GET: /api/v1/consumer_platforms/{id}/platform_connections
+    // GET: /api/v1/platform_connections
     // Request $req example:
     // *************************************************************
-    public function index(string $id): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index()
     {
-        return  ConsumerProviderResource::collection(PlatformConnection::all()->find($id));
+        return PlatformConnectionResource::collection(PlatformConnection::all());
     }
 
     // look up a relative connection per consumer platform id
@@ -28,10 +28,10 @@ class PlatformConnectionController extends Controller
     // GET: /api/v1/consumer_platforms/{id}/platform_connection/{id}
     // Request $req example:
     // *************************************************************
-    public function show(string $id): ConsumerProviderResource
+    public function show(string $id)
     {
         $platform = ConsumerPlatform::find($id);
-        return ConsumerProviderResource::make($platform->providerPlatform);
+        return ConsumerProviderResource::collection($platform->providerPlatforms);
     }
 
     /* Create a new platform connection */
