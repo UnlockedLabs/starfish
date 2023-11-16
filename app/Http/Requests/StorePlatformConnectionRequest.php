@@ -11,7 +11,7 @@ class StorePlatformConnectionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,9 +22,9 @@ class StorePlatformConnectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'consumer_platform_id' => 'required|string|max:255',
-            'provider_platform_id' => 'required|string|max:255',
-            'status' => 'nullable|string|in:active,disabled,archived',
+            'consumer_platform_id' => 'required|int|max:255',
+            'provider_platform_id' => 'required|int|max:255',
+            'status' => 'nullable|string|in:enabled,disabled,archived',
         ];
     }
 }

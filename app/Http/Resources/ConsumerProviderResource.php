@@ -16,7 +16,7 @@ class ConsumerProviderResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            'id' => $this->id,
+            'provider_platform_id' => $this->id,
             'type' => $this->type,
             'name' => $this->name,
             'description' => $this->description,

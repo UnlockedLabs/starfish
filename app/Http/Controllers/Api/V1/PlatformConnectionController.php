@@ -9,6 +9,7 @@ use App\Http\Resources\ConsumerProviderResource;
 use App\Models\PlatformConnection;
 use App\Http\Resources\PlatformConnectionResource;
 use App\Models\ConsumerPlatform;
+use Illuminate\Http\Request;
 
 class PlatformConnectionController extends Controller
 {
@@ -62,24 +63,7 @@ class PlatformConnectionController extends Controller
         // they should have both the id's, and a new state
         $conn = PlatformConnection::where('consumer_platform_id', $id)->first();
         $validated = $req->validated();
-        $conn->update('state', $validated['state']);
-        $conn->save();
+        $conn->update($validated);
         return new PlatformConnectionResource($conn);
-    }
-
-    // Delete a platform connection
-    // *************************************************************
-    // DELETE: /api/v1/consumer_platforms/{id}/platform_connection/{request_body}
-    // Request $req example:
-    // { "consumer_id": 1, "provider_id": 1 }
-    // *************************************************************
-    public function delete(string $id): \Illuminate\Http\JsonResponse
-    {
-        try {
-            PlatformConnection::where('consumer_platform_id', $id)->delete();
-            return response()->json(['success' => 'Platform connection deleted successfully'], 200);
-        } catch (\Exception) {
-            return response()->json(INVALID_REQUEST_BODY, 401);
-        }
     }
 }
