@@ -24,10 +24,10 @@ class UpdateStudentEnrollmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'provider_user_id' => 'required|string|max:255',
-            'provider_id' => 'required|string|max:255',
-            'provider_content_id' => 'required|string|max:255',
-            // 'status' => 'nullable|string|max:255',
+            'provider_user_id' => 'required|integer|exists:student_enrollments,provider_user_id',
+            'provider_platform_id' => 'required|integer|exists:provider_platforms,id',
+            'provider_content_id' => 'required|integer|exists:provider_contents,id',
+            'status' => 'required|string|max:255',
             // status would be the only thing that would be changed
         ];
     }

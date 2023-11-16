@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,7 +13,12 @@ class DatabaseSeeder extends Seeder
     {
 
         $this->call(ProviderPlatformSeeder::class);
-
+        $this->call(ConsumerPlatformSeeder::class);
+        $this->call(ProviderContentSeeder::class);
+        $this->call(PlatformConnectionSeeder::class);
+        $this->call(StudentSeeder::class);
+        $this->call(StudentMappingSeeder::class);
+        $this->call(StudentEnrollmentSeeder::class);
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',

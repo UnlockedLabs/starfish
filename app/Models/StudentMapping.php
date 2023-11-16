@@ -24,9 +24,14 @@ class StudentMapping extends Model
         return $this->hasOne(Student::class, 'student_id');
     }
 
-    public function studentEnrollment(): HasMany
+    public function studentEnrollmentProviderUser(): HasMany
     {
         return $this->hasMany(StudentEnrollment::class, 'provider_user_id');
+    }
+
+    public function studentEnrollmentConsumerUser(): HasMany
+    {
+        return $this->hasMany(StudentEnrollment::class, 'consumer_user_id');
     }
 
     public function providerPlatform(): HasOne

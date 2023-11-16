@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('platform_connections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('consumer_platform_id')->constrained();
-            $table->foreignId('provider_platform_id')->constrained();
+            $table->foreignId('consumer_platform_id')->references('id')->on('consumer_platforms');
+            $table->foreignId('provider_platform_id')->references('id')->on('provider_platforms');
             $table->string('state')->default('disabled');
             $table->timestamps();
         });

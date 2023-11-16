@@ -18,10 +18,6 @@ class ProviderContent extends Model
         'provider_platform_id',   // ProviderPlatform ID
     ];
 
-    protected $casts = [
-        'type' => ProviderContentType::class,
-    ];
-
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

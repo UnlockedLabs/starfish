@@ -22,17 +22,12 @@ class ConsumerPlatform extends Model
         'api_key',
     ];
 
-    protected $casts = [
-        'type' => ConsumerPlatformType::class
-    ];
-
     public function platformConnections(): HasMany
     {
         return $this->hasMany(PlatformConnections::class);
     }
-
     public function providerPlatforms(): BelongsToMany
     {
-        return $this->belongsToMany(ProviderPlatform::class, 'platform_connections')->withPivot('state', 'id');
+        return $this->BelongsToMany(ProviderPlatform::class, "platform_connections")->withPivot('state', 'id');
     }
 }

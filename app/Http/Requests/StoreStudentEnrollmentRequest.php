@@ -21,10 +21,10 @@ class StoreStudentEnrollmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'provider_resource_id' => 'required|string|max:255',
-            'provider_id' => 'required|unique:provider_platforms,access_key',
-            'provider_user_id' => 'required|string|max:255',
-            'status' => 'nullable|url:http,https',
+            'provider_user_id' => 'required|integer|exists:student_mappings,provider_user_id',
+            'provider_platform_id' => 'required|integer|exists:provider_platforms,id',
+            'provider_content_id' => 'required|string|exists:provider_contents,provider_content_id',
+            'status' => 'nullable|string|max:255',
         ];
     }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Enums\ProviderPlatformType;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProviderPlatform extends Model
@@ -39,5 +40,10 @@ class ProviderPlatform extends Model
     public function studentMapping(): HasMany
     {
         return $this->hasMany(StudentMapping::class, "provider_platform_id");
+    }
+
+    public function providerPlatforms(): BelongsToMany
+    {
+        return $this->BelongsToMany(ProviderPlatform::class, "platform_connections")->withPivot('state', 'id');
     }
 }

@@ -19,10 +19,10 @@ class UpdateConsumerPlatformRequest extends StoreConsumerPlatformRequest
     //  *
     //  * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
     //  */
-    // public function rules(): array
-    // {
-    //     return [
-    //         //
-    //     ];
-    // }
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+        ];
+    }
 }

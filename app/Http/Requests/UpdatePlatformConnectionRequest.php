@@ -11,7 +11,7 @@ class UpdatePlatformConnectionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,9 +22,9 @@ class UpdatePlatformConnectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'consumer_platform_id' => 'required|string|max:255',
-            'provider_platform_id' => 'required|string|max:255',
-            'status' => 'required|string|in:active,disabled,archived',
+            'consumer_platform_id' => 'nullable|integer|max:255',
+            'provider_platform_id' => 'required|integer|max:255',
+            'state' => 'required|string|in:enabled,disabled,archived',
         ];
     }
 }

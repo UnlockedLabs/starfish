@@ -6,27 +6,26 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\StudentEnrollment;
 use App\Http\Controllers\Api\V1\Controller;
-use App\Http\Requests\StudentEnrollmentRequest;
 use App\Http\Resources\StudentEnrollmentResource;
-use App\Enums\StudentEnrollmentStatus;
-use App\Http\Requests\ShowStudentEnrollmentRequest;
-use App\Models\ProviderContent;
-use App\Http\Requests\StoreProviderContentRequest;
 use App\Http\Requests\UpdateStudentEnrollmentRequest;
+use App\Models\StudentMapping;
+use Illuminate\Support\Facades\Log;
 
 class StudentEnrollmentController extends Controller
 {
     // Show all courses for a user
     //*****************************************************
     // GET: /api/v1/students/{student_id}/courses
-    // @param StudentEnrollmentRequest $request
-    // @return StudentEnrollmentResource
+    // @param string $id
+    // @return StudentEnrollmentResource::Collection
     // ****************************************************
-    public function show(ShowStudentEnrollmentRequest $request): StudentEnrollmentResource
+    public function show(string $id): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $validated = $request->validated();
-        $enrollments = StudentEnrollment::where('user_id', $validated['provider_user_id'])->and('status', StudentEnrollmentStatus::IN_PROGRESS)->get();
-        return new StudentEnrollmentResource($enrollments);
+        $mapping = StudentMapping::where('consumer_user_id', $id)->first();
+        Log::info($mapping);
+        $provider_user_id = $mapping->provider_user_id;
+        $enrollments = StudentEnrollment::where('provider_user_id', $provider_user_id)->get();
+        return StudentEnrollmentResource::collection($enrollments);
     }
 
     // Changes the status of a course for a user
@@ -35,23 +34,14 @@ class StudentEnrollmentController extends Controller
     // @param UpdateStudentEnrollmentRequest $request
     // @return Illuminate\Http\JsonResponse
     // ****************************************************
-    public function edit(UpdateStudentEnrollmentRequest $request): \Illuminate\Http\JsonResponse
+    public function edit(string $id, UpdateStudentEnrollmentRequest $request): \Illuminate\Http\JsonResponse
     {
-        try {
-            $validated = $request->validated();
-        } catch (\Exception) {
-            return response()->json(INVALID_REQUEST_BODY, 401);
-        }
-        $content = ProviderContent::where('provider_id', $validated['provider_id'])
-            ->where('provider_resource_id', $validated['provider_resource_id'])
-            ->where('user_id', $validated['user_id'])
-            ->first();
-
-        if (!$content) {
-            return response()->json(INVALID_REQUEST_BODY, 401);
-        }
-        $content->status = $validated['status'];
-        $content->save();
+        // get the student mapping, all the consumer has will be the consumer_user_id
+        // remember, this could return lots of different mappings!
+        $validated = $request->validated();
+        $enrollment = StudentEnrollment::where('provider_content_id', $validated['provider_content_id'])->first();
+        $enrollment->update($validated);
+        $enrollment->save();
         return response()->json(['success' => 'true'], 200);
     }
 }

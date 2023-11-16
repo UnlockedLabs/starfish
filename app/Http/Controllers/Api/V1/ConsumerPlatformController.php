@@ -25,7 +25,7 @@ class ConsumerPlatformController extends Controller
      */
     public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return ConsumerPlatformResource::collection(ConsumerPlatform::all(['*']));
+        return ConsumerPlatformResource::collection(ConsumerPlatform::all());
     }
 
     /**
@@ -51,7 +51,7 @@ class ConsumerPlatformController extends Controller
      * @param string $id
      * @return ConsunmerPlatformResource
      */
-    public function show(ShowConsumerPlatformRequest $id): ConsumerPlatformResource
+    public function show(string $id): ConsumerPlatformResource
     {
         try {
             $consumerPlatform = ConsumerPlatform::where('id', $id)->first();
@@ -62,16 +62,16 @@ class ConsumerPlatformController extends Controller
     }
 
     /**
-     * Update the specified resource in storage
-     * PATCH /api/v1/consumer_platforms/{id}
+     * Update the specified resource in storage (id in path, JSON request body)
+     * PATCH /api/v1/consumer_platforms/{id}/{request_body}
      * @param UpdateConsumerPlatformRequest $request
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function edit(UpdateConsumerPlatformRequest $request): \Illuminate\Http\JsonResponse
+    public function update(string $id, UpdateConsumerPlatformRequest $request): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validated();
-        $consumerPlatform = ConsumerPlatform::where('id', $validated['id'])->first();
+        $consumerPlatform = ConsumerPlatform::where('id', $id)->first();
         if ($consumerPlatform === null) {
             return response()->json(PLATFORM_NOT_FOUND, 404);
         }
@@ -86,9 +86,9 @@ class ConsumerPlatformController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function destroy(ShowConsumerPlatformRequest $request): \Illuminate\Http\JsonResponse
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
-        $consumerPlatform = ConsumerPlatform::where('id', $request->input('id'))->first();
+        $consumerPlatform = ConsumerPlatform::where('id', $id)->first();
         if ($consumerPlatform === null) {
             return response()->json(PLATFORM_NOT_FOUND, 404);
         } else {

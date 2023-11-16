@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class StudentEnrollment extends Model
 {
@@ -16,10 +15,6 @@ class StudentEnrollment extends Model
         "provider_content_id",           // Course ID
         "provider_platform_id",          // Provider Platform ID
         "status",                        // Enum (ProviderUserResourceStatus)
-    ];
-
-    protected $casts = [
-        'status' => StudentEnrollmentStatus::class,
     ];
 
     public function __construct(array $attributes = [])
@@ -34,7 +29,7 @@ class StudentEnrollment extends Model
 
     public function providerContent(): BelongsTo
     {
-        return $this->belongsTo(ProviderContent::class, 'provider_content_id');
+        return $this->belongsTo(ProviderContent::class, 'id');
     }
 
     public function providerPlatform(): BelongsTo
